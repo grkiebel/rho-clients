@@ -1,6 +1,6 @@
 import os
 from time import sleep
-from ..access import api_access as apx
+from ..generated import api_access as apx
 from ..log_config import get_logger
 
 

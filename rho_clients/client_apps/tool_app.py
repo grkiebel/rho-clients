@@ -1,7 +1,7 @@
 import random
 from time import sleep
-from access import ToolBase, WorkContext, get_tool_id
-from .sim_gen import SimReportDetails
+from generated import ToolBase, WorkContext, get_tool_id
+from ..cmds.sim import SimReportDetails
 
 
 class ToolWorker:

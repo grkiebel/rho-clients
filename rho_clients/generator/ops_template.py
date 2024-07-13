@@ -1,4 +1,4 @@
-from ..access import g_api as apx
+from ..generated import g_api as apx
 from ..log_config import get_logger
 from ..cmds.sim import Sim
 
