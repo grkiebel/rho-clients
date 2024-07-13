@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rho"
+version = "0.1.0"
+description = "Generate python file to access API defined by OpenApi3"
+dependencies = [
+    "requests",
+    "pydantic",
+    "argparse",
+    "typer",
+    "typer_shell",
+]
+
+[project.scripts]
+rho-gen = "rho_clients.generator.main:main"

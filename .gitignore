@@ -1,0 +1,14 @@
+.DS_Store
+venv
+
+*__pycache__*
+
+.vscode/
+*.egg-info/
+
+note*.txt
+x_*
+g_*
+
+
+
