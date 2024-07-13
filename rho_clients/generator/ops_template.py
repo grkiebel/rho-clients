@@ -18,6 +18,9 @@ def verify_service_status():
 
 
 def display_result(obj):
+    if obj is None:
+        print("None")
+        return
     obj_type = type(obj)
     if obj_type == list:
         for item in obj:

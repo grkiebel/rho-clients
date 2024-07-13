@@ -6,7 +6,7 @@ from .definitions import Definitions
 from .schema import ApiSchema
 
 tmplt_dir = "rho_clients/generator"
-output_dir = "rho_clients/access"
+output_dir = "rho_clients/generated"
 
 
 class Generator:

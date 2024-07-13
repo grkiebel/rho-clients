@@ -126,7 +126,7 @@ def <ACCESS_FUNC_NAME>(<ACCESS_FUNC_DEF_ARGS>) -> <ACCESS_FUNC_RETURN_TYPE>:
     response = requests.<HTTP_METHOD>(url<ACCESS_REQUEST_MODEL>)
     response.raise_for_status()
     data = response.json()
-    <ACCESS_FUNC_OUTPUT_CONVERSION>
+    return <ACCESS_FUNC_OUTPUT_CONVERSION>
 """
 
 
