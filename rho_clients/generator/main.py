@@ -1,21 +1,7 @@
 from .schema import ApiSchema
 from .definitions import Definitions
-from .x_file_writers import ApiAccessFileWriter
+from .generate import Generator
 import argparse
-
-
-class ApiGenerator:
-    def __init__(self, schema_source, output_file):
-
-        self.schema_source = schema_source
-        self.output_file = output_file
-
-    def generate_api(self):
-        schema = ApiSchema(self.schema_source)
-        definitions = Definitions(schema)
-
-        writer = ApiAccessFileWriter(definitions)
-        writer.write(self.output_file)
 
 
 # add a new generator class for each new type of generated file
@@ -23,8 +9,9 @@ class ApiGenerator:
 
 def main():
     schema_source, output_file = get_args()
-    generator = ApiGenerator(schema_source, output_file)
-    generator.generate_api()
+    generator = Generator(source="http://localhost:8080/openapi.json")
+    generator.run()
+    generator.diagnostic()
 
 
 def get_args():
@@ -41,9 +28,4 @@ def get_args():
 
 
 if __name__ == "__main__":
-    # schema_source, output_file = get_args()
-
-    # main(schema_source, output_file)
     main()
-
-    # rho-gen "http://localhost:8080/openapi.json"
