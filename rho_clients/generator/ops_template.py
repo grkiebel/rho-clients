@@ -32,19 +32,3 @@ def display_result(obj):
     else:
         for attr, value in vars(obj).items():
             print(f"{attr}: {value}")
-
-
-# ------------------- general ops -------------------
-
-
-# def clear_all():
-#     tool_clear()
-#     task_clear()
-#     report_clear()
-#     work_clear()
-#     archive_clear()
-
-
-# def service_status():
-#     result = apx.read_root()
-#     display_result(result)
