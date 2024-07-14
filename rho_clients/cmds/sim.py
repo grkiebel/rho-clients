@@ -1,6 +1,6 @@
 import random
 from typing import List
-from ..generated import g_api as apx
+from ..api import g_api as apx
 from ..client_apps import app_models as apm, assigner_app as asn
 
 

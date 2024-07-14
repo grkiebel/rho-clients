@@ -143,7 +143,7 @@ ops_basic_func_template = f"""
 # <SUMMARY>
 def <OPS_FUNC_NAME>(<ACCESS_FUNC_DEF_ARGS>):
     result = apx.<ACCESS_FUNC_NAME>(<ACCESS_FUNC_CALLING_ARGS>)
-    display_result(result)
+    display_ops_result(result)
 """
 
 ops_create_func_templete = f"""
@@ -152,7 +152,7 @@ def <OPS_FUNC_NAME>(<OPS_FUNC_DEF_ARGS>):
     creation_models = sim.make_<OPS_FUNC_NAME>_list(num)
     for item in creation_models:
         result = apx.<ACCESS_FUNC_NAME>(item)
-        display_result(result)
+        display_ops_result(result)
 """
 
 
@@ -198,12 +198,6 @@ class FuncBuilder(FuncBuilderBase):
         if self.func_type == "create":
             return ops_create_func_templete
         return ops_basic_func_template
-
-    # def _get_code_from_template(self, template: str):
-    #     code = template
-    #     for placeholder, value in self.template_tag_values.items():
-    #         code = code.replace(placeholder, value)
-    #     return code
 
 
 # --------------------------------------

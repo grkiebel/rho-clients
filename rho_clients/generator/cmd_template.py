@@ -4,7 +4,7 @@ from typing import Optional, Callable
 from click_shell import make_click_shell
 from typer import Context, Typer, Argument
 from rich import print
-from ..generated import g_ops as ops
+from ..ops import g_ops as ops
 
 # ------------------------------------------------------------
 

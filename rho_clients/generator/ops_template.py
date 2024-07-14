@@ -1,4 +1,4 @@
-from ..generated import g_api as apx
+from ..api import g_api as apx
 from ..log_config import get_logger
 from ..cmds.sim import Sim
 
@@ -17,7 +17,7 @@ def verify_service_status():
         return False
 
 
-def display_result(obj):
+def display_ops_result(obj):
     if obj is None:
         print("None")
         return

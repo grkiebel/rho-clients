@@ -1,5 +1,5 @@
 from typer import Typer
-from ..generated.g_cmds import (
+from .g_cmds import (
     tool_app,
     task_app,
     work_app,

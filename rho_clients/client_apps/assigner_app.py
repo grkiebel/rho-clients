@@ -1,5 +1,5 @@
 from typing import List, Set
-from ..generated import g_api as apx
+from ..api import g_api as apx
 from ..log_config import get_logger
 
 logger = get_logger("Assigner")

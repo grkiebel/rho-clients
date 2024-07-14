@@ -11,7 +11,7 @@ def main():
     schema_source, output_file = get_args()
     generator = Generator(source="http://localhost:8080/openapi.json")
     generator.run()
-    generator.diagnostic()
+    generator.write_diagnostic_file()
 
 
 def get_args():
