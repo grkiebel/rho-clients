@@ -10,7 +10,7 @@ tmplt_dir = os.path.join(root_dir, "generator")
 
 
 def get_file_header() -> str:
-    template_path = os.path.join(tmplt_dir, "header_template.py")
+    template_path = os.path.join(tmplt_dir, "template_hdr.py")
     with open(template_path, "r") as template_file:
         header_template = template_file.read()
         return header_template.replace(
@@ -73,20 +73,20 @@ class Generator:
         self.file_info = {
             "api_file": {
                 "file_name": "g_api.py",
-                "template_file": os.path.join(tmplt_dir, "api_template.py"),
+                "template_file": os.path.join(tmplt_dir, "template_api.py"),
                 "output_file": os.path.join(root_dir, "api", "g_api.py"),
                 "code_list": [fd.acc_func_code() for fd in self.func_builders],
                 "model_code": [mb.code() for mb in self.model_builders],
             },
             "ops_file": {
                 "file_name": "g_ops.py",
-                "template_file": os.path.join(tmplt_dir, "ops_template.py"),
+                "template_file": os.path.join(tmplt_dir, "template_ops.py"),
                 "output_file": os.path.join(root_dir, "ops", "g_ops.py"),
                 "code_list": [fd.ops_func_code() for fd in self.func_builders],
             },
             "cmds_file": {
                 "file_name": "g_cmds.py",
-                "template_file": os.path.join(tmplt_dir, "cmd_template.py"),
+                "template_file": os.path.join(tmplt_dir, "template_cmd.py"),
                 "output_file": os.path.join(root_dir, "cmds", "g_cmds.py"),
                 "code_list": [fd.cmd_func_code() for fd in self.func_builders],
                 "cmd_shell_code": self.cmd_shell_code,
