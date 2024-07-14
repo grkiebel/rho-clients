@@ -9,6 +9,7 @@ def display_ops_result(obj):
     if obj_type == list:
         for item in obj:
             print(vars(item))
+        print(f"Total: {len(obj)}")
     elif obj_type == dict:
         print(obj)
     elif obj_type == apx.Outcome:
