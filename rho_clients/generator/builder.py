@@ -1,5 +1,6 @@
 from ast import arg
 import cmd
+from os import path
 from typing import List
 from .model_def import ModelDef, ModelField
 from .definitions import FuncDef
@@ -89,6 +90,7 @@ class FuncBuilderBase:
         self.acc_name: str = "_".join(path_fields)
         self.ops_func_name: str = "_".join(path_fields)
         self.func_type: str = path_fields[1]
+        self.cmd_func_name: str = path_fields[-1]
 
         args_builder = ArgsBuilder(self.base_args, self.request_model, self.func_type)
         self.acc_def_args = ", ".join(args_builder.acc_def_args)
@@ -99,21 +101,28 @@ class FuncBuilderBase:
 
         self.template_tag_values = {
             "<SUMMARY>": self.summary,
+            "<PATH>": self.path,
+            "<PATH_ROOT>": self.path_root,
+            "<FUNC_TYPE>": self.func_type,
+            "<HTTP_METHOD>": self.http_method,
             "<ACCESS_FUNC_NAME>": self.acc_name,
             "<ACCESS_FUNC_DEF_ARGS>": self.acc_def_args,
             "<ACCESS_FUNC_CALLING_ARGS>": self.acc_call_args,
             "<ACCESS_FUNC_RETURN_TYPE>": self.acc_return_type,
-            "<PATH>": self.path,
-            "<HTTP_METHOD>": self.http_method,
             "<ACCESS_REQUEST_MODEL>": self.acc_request_model,
             "<ACCESS_FUNC_OUTPUT_CONVERSION>": self.acc_output_conversion,
-            "<PATH_ROOT>": self.path_root,
-            "<FUNC_TYPE>": self.func_type,
             "<OPS_FUNC_NAME>": self.ops_func_name,
             "<OPS_FUNC_DEF_ARGS>": self.ops_func_def_args,
             "<OPS_FUNC_CALLING_ARGS>": self.ops_func_call_args,
+            "<CMD_FUNC_NAME>": self.cmd_func_name,
             "<CMD_DEF_ARGS>": self.cmd_args,
         }
+
+    def _get_code_from_template(self, template: str):
+        code = template
+        for placeholder, value in self.template_tag_values.items():
+            code = code.replace(placeholder, value)
+        return code
 
 
 # --------------------------------------
@@ -140,8 +149,8 @@ def <OPS_FUNC_NAME>(<ACCESS_FUNC_DEF_ARGS>):
 ops_create_func_templete = f"""
 # <SUMMARY>
 def <OPS_FUNC_NAME>(<OPS_FUNC_DEF_ARGS>):
-    creation_list = sim.make_<OPS_FUNC_NAME>_list(num)
-    for item in creation_list:
+    creation_models = sim.make_<OPS_FUNC_NAME>_list(num)
+    for item in creation_models:
         result = apx.<ACCESS_FUNC_NAME>(item)
         display_result(result)
 """
@@ -149,7 +158,7 @@ def <OPS_FUNC_NAME>(<OPS_FUNC_DEF_ARGS>):
 
 cmd_func_template = f'''
 @<PATH_ROOT>_app.command()
-def <FUNC_TYPE>(<CMD_DEF_ARGS>):
+def <CMD_FUNC_NAME>(<CMD_DEF_ARGS>):
     """ <SUMMARY> """
     ops.<OPS_FUNC_NAME>(<OPS_FUNC_CALLING_ARGS>)
 '''
@@ -190,11 +199,11 @@ class FuncBuilder(FuncBuilderBase):
             return ops_create_func_templete
         return ops_basic_func_template
 
-    def _get_code_from_template(self, template: str):
-        code = template
-        for placeholder, value in self.template_tag_values.items():
-            code = code.replace(placeholder, value)
-        return code
+    # def _get_code_from_template(self, template: str):
+    #     code = template
+    #     for placeholder, value in self.template_tag_values.items():
+    #         code = code.replace(placeholder, value)
+    #     return code
 
 
 # --------------------------------------
