@@ -55,7 +55,7 @@ def write_diagnostic_file(
     with open(diagnostic_file, "w") as file:
         for fb in bldrs:
             file.write("\n-------\n")
-            file.write(fb.acc_func_code())
+            file.write(fb.api_func_code())
             file.write(fb.ops_func_code())
             file.write(fb.cmd_func_code())
 
@@ -75,7 +75,7 @@ class Generator:
                 "file_name": "g_api.py",
                 "template_file": os.path.join(tmplt_dir, "template_api.py"),
                 "output_file": os.path.join(root_dir, "api", "g_api.py"),
-                "code_list": [fd.acc_func_code() for fd in self.func_builders],
+                "code_list": [fd.api_func_code() for fd in self.func_builders],
                 "model_code": [mb.code() for mb in self.model_builders],
             },
             "ops_file": {
