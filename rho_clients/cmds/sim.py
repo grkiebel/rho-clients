@@ -73,7 +73,7 @@ class Sim:
         name = klass.__name__  # Get the name of the class
         instance_attributes = vars(instance)  # Get the attributes of the instance
         for attribute in instance_attributes:
-            # Set the possible attributes of the instance
+            # Set the applicable attributes of the instance
             if attribute == "task_type":
                 setattr(instance, attribute, self.task_type())
             if attribute == "max_priority":

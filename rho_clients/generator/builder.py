@@ -112,6 +112,9 @@ class FuncBuilderBase:
             "<CMD_DEF_ARGS>": self.cmd_args,
             "<DISPLAY_LABEL>": self.label,
         }
+        print(f"/n------------------")
+        for k, v in self.template_tag_values.items():
+            print(f"{k} -> {v}")
 
     def _get_code_from_template(self, template: str):
         code = template
@@ -147,8 +150,8 @@ cmd_create_func_template = f'''
 def <CMD_FUNC_NAME>(<CMD_DEF_ARGS>):
     """ <SUMMARY> """
     creation_models = sim.make_<ACCESS_FUNC_NAME>_list(num)
-    for item in creation_models:
-        result = apx.<ACCESS_FUNC_NAME>(item)
+    for req in creation_models:
+        result = apx.<ACCESS_FUNC_NAME>(<ACCESS_FUNC_CALLING_ARGS>)
         display_result(result, "<DISPLAY_LABEL>")
 '''
 
