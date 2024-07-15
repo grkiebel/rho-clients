@@ -1,9 +1,11 @@
+from rho_clients.api import g_api as apx
 from rho_clients.cmds import cmd_shell as cs
+from rho_clients.log_config import get_logger
 
 
 if __name__ == "__main__":
 
-    # Ctx().initialize(api_axs, assigner, sims, app_models)
+    apx.initialize("http://localhost:8080", get_logger("API-Access"))
 
     cs.main()
 

@@ -27,9 +27,6 @@ class ArgsBuilder:
         self.api_def_args: List[str] = [f"{p[0]}: {p[1]}" for p in base_args]
         self.api_call_args: List[str] = [p[0] for p in base_args]
 
-        self.ops_def_args: List[str] = [a for a in self.api_def_args]
-        self.ops_call_args: List[str] = [a for a in self.api_call_args]
-
         if request_model:
             self.api_def_args.append(f"req: {request_model}")
             self.api_call_args.append("req")
@@ -39,8 +36,6 @@ class ArgsBuilder:
         self.cmd_def_args = [f"{a}: IdArg" for a in id_args]
         if func_type == "create":
             self.cmd_def_args.append("num: NumOption")
-            self.ops_def_args.append("num: int")
-            self.ops_call_args.append("num")
 
 
 class FuncBuilderBase:
@@ -95,8 +90,8 @@ class FuncBuilderBase:
         args_builder = ArgsBuilder(self.base_args, self.request_model, self.func_type)
         self.api_def_args = ", ".join(args_builder.api_def_args)
         self.api_call_args = ", ".join(args_builder.api_call_args)
-        self.ops_func_def_args = ", ".join(args_builder.ops_def_args)
-        self.ops_func_call_args = ", ".join(args_builder.ops_call_args)
+        # self.ops_func_def_args = ", ".join(args_builder.ops_def_args)
+        # self.ops_func_call_args = ", ".join(args_builder.ops_call_args)
         self.cmd_args = ", ".join(args_builder.cmd_def_args)
 
         self.template_tag_values = {
@@ -111,9 +106,6 @@ class FuncBuilderBase:
             "<ACCESS_FUNC_RETURN_TYPE>": self.api_return_type,
             "<ACCESS_REQUEST_MODEL>": self.api_request_model,
             "<ACCESS_FUNC_OUTPUT_CONVERSION>": self.api_output_conversion,
-            "<OPS_FUNC_NAME>": self.ops_func_name,
-            "<OPS_FUNC_DEF_ARGS>": self.ops_func_def_args,
-            "<OPS_FUNC_CALLING_ARGS>": self.ops_func_call_args,
             "<CMD_FUNC_NAME>": self.cmd_func_name,
             "<CMD_DEF_ARGS>": self.cmd_args,
         }
@@ -139,28 +131,22 @@ def <ACCESS_FUNC_NAME>(<ACCESS_FUNC_DEF_ARGS>) -> <ACCESS_FUNC_RETURN_TYPE>:
 """
 
 
-ops_basic_func_template = f"""
-# <SUMMARY>
-def <OPS_FUNC_NAME>(<ACCESS_FUNC_DEF_ARGS>):
-    result = apx.<ACCESS_FUNC_NAME>(<ACCESS_FUNC_CALLING_ARGS>)
-    display_ops_result(result)
-"""
-
-ops_create_func_templete = f"""
-# <SUMMARY>
-def <OPS_FUNC_NAME>(<OPS_FUNC_DEF_ARGS>):
-    creation_models = sim.make_<OPS_FUNC_NAME>_list(num)
-    for item in creation_models:
-        result = apx.<ACCESS_FUNC_NAME>(item)
-        display_ops_result(result)
-"""
-
-
-cmd_func_template = f'''
+cmd_basic_func_template = f'''
 @<PATH_ROOT>_app.command()
 def <CMD_FUNC_NAME>(<CMD_DEF_ARGS>):
     """ <SUMMARY> """
-    ops.<OPS_FUNC_NAME>(<OPS_FUNC_CALLING_ARGS>)
+    result = apx.<ACCESS_FUNC_NAME>(<ACCESS_FUNC_CALLING_ARGS>)
+    display_ops_result(result)
+'''
+
+cmd_create_func_template = f'''
+@<PATH_ROOT>_app.command()
+def <CMD_FUNC_NAME>(<CMD_DEF_ARGS>):
+    """ <SUMMARY> """
+    creation_models = sim.make_<ACCESS_FUNC_NAME>_list(num)
+    for item in creation_models:
+        result = apx.<ACCESS_FUNC_NAME>(item)
+        display_ops_result(result)
 '''
 
 # --------------------------------------
@@ -175,12 +161,9 @@ class FuncBuilder(FuncBuilderBase):
     def api_func_code(self):
         return self._get_code_from_template(api_template)
 
-    def ops_func_code(self) -> str:
-        template = self._get_ops_code_template()
-        return self._get_code_from_template(template)
-
     def cmd_func_code(self) -> str:
-        return self._get_code_from_template(cmd_func_template)
+        template = self._get_cmd_code_template()
+        return self._get_code_from_template(template)
 
     def __str__(self):
         items = [
@@ -194,10 +177,10 @@ class FuncBuilder(FuncBuilderBase):
         ]
         return "\n".join(items)
 
-    def _get_ops_code_template(self):
+    def _get_cmd_code_template(self):
         if self.func_type == "create":
-            return ops_create_func_templete
-        return ops_basic_func_template
+            return cmd_create_func_template
+        return cmd_basic_func_template
 
 
 # --------------------------------------

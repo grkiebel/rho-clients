@@ -4,11 +4,15 @@ from typing import Optional, Callable
 from click_shell import make_click_shell
 from typer import Context, Typer, Argument
 from rich import print
-from ..ops import g_ops as ops
+from ..api import g_api as apx
+from ..cmds.helpers import display_result
+from ..cmds.sim import Sim
 
 # ------------------------------------------------------------
 
 intro = "\n Work: Type help to see commands.\nType 'exit' to return to main menu.\n"
+
+sim = Sim()
 
 
 def make_typer_shell(

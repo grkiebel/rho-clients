@@ -1,7 +1,7 @@
 from ..api import g_api as apx
 
 
-def display_ops_result(obj):
+def display_result(obj):
     if obj is None:
         print("None")
         return
