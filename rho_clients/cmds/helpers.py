@@ -1,7 +1,8 @@
 from ..api import g_api as apx
 
 
-def display_result(obj):
+def display_result(obj, label: str = ""):
+    print(f"\n==== {label} ====")
     if obj is None:
         print("None")
         return

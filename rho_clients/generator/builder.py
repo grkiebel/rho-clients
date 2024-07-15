@@ -83,9 +83,11 @@ class FuncBuilderBase:
             f for f in self.path.split("/") if f and not f.startswith("{")
         ]
         self.api_name: str = "_".join(path_fields)
-        self.ops_func_name: str = "_".join(path_fields)
         self.func_type: str = path_fields[1]
         self.cmd_func_name: str = path_fields[-1]
+        self.label = " ".join(
+            [z.capitalize() for z in [self.path_root, self.cmd_func_name]]
+        )
 
         args_builder = ArgsBuilder(self.base_args, self.request_model, self.func_type)
         self.api_def_args = ", ".join(args_builder.api_def_args)
@@ -108,6 +110,7 @@ class FuncBuilderBase:
             "<ACCESS_FUNC_OUTPUT_CONVERSION>": self.api_output_conversion,
             "<CMD_FUNC_NAME>": self.cmd_func_name,
             "<CMD_DEF_ARGS>": self.cmd_args,
+            "<DISPLAY_LABEL>": self.label,
         }
 
     def _get_code_from_template(self, template: str):
@@ -136,7 +139,7 @@ cmd_basic_func_template = f'''
 def <CMD_FUNC_NAME>(<CMD_DEF_ARGS>):
     """ <SUMMARY> """
     result = apx.<ACCESS_FUNC_NAME>(<ACCESS_FUNC_CALLING_ARGS>)
-    display_ops_result(result)
+    display_result(result, "<DISPLAY_LABEL>")
 '''
 
 cmd_create_func_template = f'''
@@ -146,7 +149,7 @@ def <CMD_FUNC_NAME>(<CMD_DEF_ARGS>):
     creation_models = sim.make_<ACCESS_FUNC_NAME>_list(num)
     for item in creation_models:
         result = apx.<ACCESS_FUNC_NAME>(item)
-        display_ops_result(result)
+        display_result(result, "<DISPLAY_LABEL>")
 '''
 
 # --------------------------------------
