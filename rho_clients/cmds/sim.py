@@ -2,41 +2,11 @@ import random
 from typing import List
 from ..api import g_api as apx
 from ..client_apps import app_models as apm, assigner_app as asn
-
-
-words = [
-    "Alfa",
-    "Bravo",
-    "Charlie",
-    "Delta",
-    "Echo",
-    "Foxtrot",
-    "Golf",
-    "Hotel",
-    "India",
-    "Juliett",
-    "Kilo",
-    "Lima",
-    "Mike",
-    "November",
-    "Oscar",
-    "Papa",
-    "Quebec",
-    "Romeo",
-    "Sierra",
-    "Tango",
-    "Uniform",
-    "Victor",
-    "Whiskey",
-    "Xray",
-    "Yankee",
-    "Zulu",
-]
+from .sim_words import generate_random_sentence, generate_random_state
 
 
 class Sim:
-    def __init__(self, word_list: List[str] = None):
-        self.word_list = word_list or words
+    def __init__(self): ...
 
     def priority(self):
         return random.randint(1, 3)
@@ -50,10 +20,6 @@ class Sim:
             return random.choice(["alpha", "beta", "gamma"])
         if "task" in name:
             return random.choice(["", "", "", "", "", "alpha", "beta", "gamma"])
-
-    def words(self, num: int):
-        random.shuffle(self.word_list)
-        return " ".join(self.word_list[:num])
 
     def task_id(self):
         letter = chr(random.randint(65, 90))
@@ -83,9 +49,9 @@ class Sim:
             if attribute == "priority":
                 setattr(instance, attribute, self.priority())
             if attribute == "stage":
-                setattr(instance, attribute, self.words(1))
+                setattr(instance, attribute, generate_random_state())
             if attribute == "action":
-                setattr(instance, attribute, self.words(3))
+                setattr(instance, attribute, generate_random_sentence())
 
         return instance
 
@@ -112,7 +78,7 @@ class Sim:
         for _ in range(num_reports):
             report_details = self.instance(apm.ReportDetails).model_dump()
             report_create = apx.ReportCreate(
-                status=self.words(1), details=report_details
+                status=generate_random_state(), details=report_details
             )
             result.append(report_create)
         return result
