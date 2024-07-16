@@ -49,10 +49,3 @@ class AppMatchChecker(MatchCheckerBase):
         self.is_match = lambda task, tool: all(
             func(task.task_needs, tool.tool_skills) for func in self.comparators
         )
-
-
-class Context:
-    tool_skills_class = ToolSkills
-    task_needs_class = TaskNeeds
-    report_details_class = ReportDetails
-    match_checker_class = AppMatchChecker
