@@ -4,7 +4,7 @@ import os
 random.seed(os.getpid())
 
 
-def generate_random_sentence():
+def sentence():
     adjective = random.choice(adjectives)
     noun = random.choice(nouns)
     verb = random.choice(verbs)
@@ -13,7 +13,7 @@ def generate_random_sentence():
     return sentence.capitalize()
 
 
-def generate_random_state():
+def state():
     return random.choice(states)
 
 
@@ -242,5 +242,5 @@ states = [
 
 if __name__ == "__main__":
     for _ in range(15):
-        sentence = generate_random_sentence()
+        sentence = sentence()
         print(sentence)

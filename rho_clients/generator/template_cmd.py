@@ -6,13 +6,11 @@ from typer import Context, Typer, Argument
 from rich import print
 from ..api import g_api as apx
 from ..cmds.helpers import display_result
-from ..cmds.sim import Sim
+from ..cmds import y_sim as sim
 
 # ------------------------------------------------------------
 
 intro = "\n Work: Type help to see commands.\nType 'exit' to return to main menu.\n"
-
-sim = Sim()
 
 
 def make_typer_shell(
@@ -58,18 +56,3 @@ NumOption = Annotated[
 ]
 
 IdArg = Annotated[Optional[str], typer.Argument(help="The ID of item")]
-
-
-# ----[Display Results ]-----------------------------------
-
-
-def print_list_result(result):
-    for item in result:
-        fields = [f"{key}: {value}" for key, value in vars(item).items()]
-        print(", ".join(fields))
-    print(f"Total: {len(result)}")
-
-
-def print_single_result(result):
-    fields = [f"{key}: {value}" for key, value in vars(result).items()]
-    print(", ".join(fields))

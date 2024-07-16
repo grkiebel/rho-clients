@@ -12,7 +12,7 @@ class MatchCheckerBase:
 
     def __init__(self):
         self.task_sort_key = None  # default: no task sorting
-        self.is_match = lambda task, tool: True  # default: always match
+        self.is_match = lambda task_needs, tool_skills: True  # default: always match
 
 
 class WorkFinder:
@@ -41,7 +41,7 @@ class WorkFinder:
             (tool, task)
             for tool in self.tools
             for task in self.tasks
-            if self.is_match(task, tool)
+            if self.is_match(task.task_needs, tool.tool_skills)
         ]
         logger.info(f"Found {len(self.matches)} potential matche(s)")
 

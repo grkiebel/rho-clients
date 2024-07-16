@@ -6,12 +6,10 @@ from rho_clients.api import g_api as apx
 from rho_clients.client_apps import app_models as cam
 from rho_clients.client_apps.assigner_app import WorkFinder
 from rho_clients.client_apps.tool_app import ToolWorker
-from rho_clients.cmds.sim import Sim, make
+from rho_clients.cmds import y_sim as sim
 
 
 apx.initialize("http://localhost:8080", get_logger("API-Access"))
-
-sim = Sim()
 
 
 def clear_db():
