@@ -1,6 +1,6 @@
 from typing import List
 from ..api import g_api as apx
-from ..cmds import y_sim as sim
+from . import sim
 from ..client_apps import y_app_models as yam
 
 

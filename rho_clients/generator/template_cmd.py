@@ -6,7 +6,7 @@ from typer import Context, Typer, Argument
 from rich import print
 from ..api import g_api as apx
 from ..cmds.helpers import display_result
-from ..cmds import y_sim as sim
+from ..cmds import sim
 
 # ------------------------------------------------------------
 
