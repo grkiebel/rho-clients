@@ -37,6 +37,7 @@ class AppMatchChecker(MatchCheckerBase):
     """Check if a tool can service a task- modify as needed"""
 
     def __init__(self):
+        super().__init__()
 
         self.comparators = [
             lambda needs, skills: needs[TASK_TYPE] == skills[TASK_TYPE],

@@ -4,7 +4,7 @@ from threading import Thread
 from rho_clients.log_config import get_logger
 from rho_clients.api import g_api as apx
 from rho_clients.client_apps import app_models as cam
-from rho_clients.client_apps.assigner_app import WorkFinder
+from rho_clients.client_apps.assigner_app import find_assignments
 from rho_clients.client_apps.tool_app import ToolWorker
 from rho_clients.cmds import sim
 
@@ -38,10 +38,8 @@ def clear_db():
 
 
 def assign_work() -> None:
-    work_finder = cam.WorkFinder(
-        match_checker=cam.AppMatchChecker()
-    )  # just use MatchCheckerBase for "match all"
-    for tool_id, task_id in work_finder.pairs:
+    pairs = find_assignments(cam.AppMatchChecker())
+    for tool_id, task_id in pairs:
         work_create_rep = apx.WorkCreate(tool_id=tool_id, task_id=task_id)
         outcome = apx.create_work(work_create_rep)
         print(outcome.message)
