@@ -1,51 +1,49 @@
-from pydantic import BaseModel
 from .assigner_app import MatchCheckerBase
+from ..cmds import sim as sim
 
 
 """ 
-This module defines the application-specific data models and 
-application-specific match checker class that determines if a tool can service a task.
+This module defines the application-specific data models
+for the payloads managed by the rho-service.
 """
 
 
-class ToolSkills(BaseModel):
-    """ " This class is required, but its attributes can be modified as needed"""
+TASK_TYPE = "task_type"
+MAX_PRIORITY = "max_priority"
+PROCESSOR = "processor"
+PRIORITY = "priority"
+STAGE = "stage"
+ACTION = "action"
 
-    task_type: str = ""
-    max_priority: int = 0
-    processor: str = ""
-    # TODO: description: str = ""
+tool_skills_template = {
+    TASK_TYPE: sim.task_type,
+    MAX_PRIORITY: sim.priority,
+    PROCESSOR: sim.tool_processor,
+}
 
+task_needs_template = {
+    TASK_TYPE: sim.task_type,
+    PRIORITY: sim.priority,
+    PROCESSOR: sim.task_processor,
+}
 
-class TaskNeeds(BaseModel):
-    """ " This class is required, but its attributes can be modified as needed"""
-
-    task_type: str = ""
-    priority: int = 0
-    processor: str = ""
-    # TODO: description: str = ""
-    # TODO: settings: dict = {}
-    # TODO: resource_locations: dict = {}
-
-
-class ReportDetails(BaseModel):
-    """ " This class is required, but its attributes can be modified as needed"""
-
-    stage: str = ""
-    action: str = ""
-    # TODO: note: str = ""
+report_details_template = {
+    STAGE: sim.stage,
+    ACTION: sim.action,
+}
 
 
 class AppMatchChecker(MatchCheckerBase):
     """Check if a tool can service a task- modify as needed"""
 
     def __init__(self):
+
         self.comparators = [
-            lambda needs, skills: needs["task_type"] == skills["task_type"],
-            lambda needs, skills: needs["priority"] >= skills["max_priority"],
-            lambda needs, skills: needs["processor"] in ["", skills["processor"]],
+            lambda needs, skills: needs[TASK_TYPE] == skills[TASK_TYPE],
+            lambda needs, skills: needs[PRIORITY] >= skills[MAX_PRIORITY],
+            lambda needs, skills: needs[PROCESSOR] in ["", skills[PROCESSOR]],
         ]
-        self.task_sort_key = lambda task: task.task_needs["priority"]
-        self.is_match = lambda task, tool: all(
-            func(task.task_needs, tool.tool_skills) for func in self.comparators
+        self.task_sort_key = lambda task_needs: task_needs[PRIORITY]
+        self.is_match = lambda task_needs, tool_skills: all(
+            func(task_needs.task_needs, tool_skills) for func in self.comparators
         )
