@@ -18,14 +18,21 @@ def get_file_header() -> str:
         )
 
 
+def assure_folders_exist(file_path: str):
+    folder_path = os.path.dirname(file_path)
+    os.makedirs(folder_path, exist_ok=True)
+
+
 def write_output_file(key: str, file_info: dict):
     header = get_file_header()
 
     template_path = file_info["template_file"]
+
     with open(template_path, "r") as template:
         template_code = template.read()
 
     output_file = file_info["output_file"]
+    assure_folders_exist(output_file)
 
     with open(output_file, "w") as file:
         file.write(header)
