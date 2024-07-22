@@ -1,6 +1,8 @@
 import random
 from .sim_words import sentence, state
 
+""" Generate simulated data for testing and command shell commands """
+
 
 def priority():
     return random.randint(1, 3)
