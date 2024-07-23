@@ -7,9 +7,12 @@ import argparse
 
 def main():
     schema_source, diagnostic_file = get_args()
+    print("schema_source:", schema_source, "\ndiagnostic_file:", diagnostic_file)
+
     generator = Generator(source=schema_source)
     generator.run(diagnostic=diagnostic_file)
-    print("schema_source:", schema_source, "diagnostic_file:", diagnostic_file)
+
+    print("Done")
 
 
 def get_args():
