@@ -112,6 +112,8 @@ class FuncBuilderBase:
             "<CMD_DEF_ARGS>": self.cmd_args,
             "<DISPLAY_LABEL>": self.label,
         }
+
+    def dump(self):
         print(f"/n------------------")
         for k, v in self.template_tag_values.items():
             print(f"{k} -> {v}")

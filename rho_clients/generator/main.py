@@ -1,5 +1,3 @@
-from .schema import ApiSchema
-from .definitions import Definitions
 from .generate import Generator
 import argparse
 
@@ -8,23 +6,28 @@ import argparse
 
 
 def main():
-    schema_source, output_file = get_args()
-    generator = Generator(source="http://localhost:8080/openapi.json")
-    generator.run()
-    generator.write_diagnostic_file()
+    schema_source, diagnostic_file = get_args()
+    generator = Generator(source=schema_source)
+    generator.run(diagnostic=diagnostic_file)
+    print("schema_source:", schema_source, "diagnostic_file:", diagnostic_file)
 
 
 def get_args():
     parser = argparse.ArgumentParser(description="API Generator")
-    parser.add_argument("schema_source", help="Path to the schema source")
     parser.add_argument(
-        "-o",
-        "--output_file",
-        default="rho_clients/access/api_access.py",
-        help="Path to the output file",
+        "-s",
+        "--schema_source",
+        help="Path to the schema source",
+        default="http://localhost:8080/openapi.json",
+    )
+    parser.add_argument(
+        "-d",
+        "--diagnostic_file",
+        action="store_true",
+        help="Generate a diagnostic file",
     )
     args = parser.parse_args()
-    return args.schema_source, args.output_file
+    return args.schema_source, args.diagnostic_file
 
 
 if __name__ == "__main__":

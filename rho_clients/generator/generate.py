@@ -34,6 +34,8 @@ def write_output_file(key: str, file_info: dict):
     output_file = file_info["output_file"]
     assure_folders_exist(output_file)
 
+    print(f"Writing {key} to {output_file}")
+
     with open(output_file, "w") as file:
         file.write(header)
         file.write(template_code)
@@ -93,11 +95,12 @@ class Generator:
             },
         }
 
-    def run(self):
+    def run(self, diagnostic: bool = False):
         for key, file_info in self.file_info.items():
             write_output_file(key, file_info)
 
-        write_diagnostic_file(self.func_builders)
+        if diagnostic:
+            write_diagnostic_file(self.func_builders)
 
 
 def generate(source: str = "schema.json"):
