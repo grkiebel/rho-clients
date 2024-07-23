@@ -1,4 +1,4 @@
-from typing import List, Set
+from typing import List, Set, Tuple
 from ..api import g_api as apx
 from ..log_config import get_logger
 
@@ -15,7 +15,7 @@ class MatchCheckerBase:
         self.is_match = lambda task_needs, tool_skills: True  # default: always match
 
 
-def find_assignments(match_checker: MatchCheckerBase) -> List[(str, str)]:
+def find_assignments(match_checker: MatchCheckerBase) -> List[Tuple[str, str]]:
     pairs: List[(str, str)] = []
     sort_key = match_checker.task_sort_key
     is_match = match_checker.is_match
