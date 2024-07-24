@@ -1,30 +1,27 @@
 import random
 from time import sleep
-from generated import ToolBase, WorkContext, get_tool_id
-from ..cmds.sim import SimReportDetails
+from typing import List
+from .tool_base import WorkContext, run_as_tool
+from ..cmds import helpers as hp
+from ..api import g_api as apx
 
 
-class ToolWorker:
-    def __init__(self, tool_id: str):
-        self.tool_id = tool_id
+@run_as_tool
+def simulate_work(context: WorkContext) -> bool:
+    context.logger.info(f"Simulating work for {context.work_id}")
 
-    def run(self):
-        ToolBase(self.tool_id).run(self.do_work)
+    num_reports = random.randint(1, 4)
+    report_details_list: List[dict] = hp.make_report_details(num_reports)
+    for report_details in report_details_list:
+        context.send_report(context.work_id, "Processing", report_details)
+        sleep(random.randint(1, 3))
 
-    def do_work(self, context: WorkContext) -> bool:
-        context.logger.info(f"Simulating work for {context.work_id}")
-        for i in range(1, random.randint(1, 4)):
-            details = SimReportDetails.details_dict()
-            context.send_report(context.work_id, "Processing", details)
-            sleep(random.randint(3, 7))
-        details = SimReportDetails.details_dict()
-        context.send_successful(context.work_id, details)
-        return True  # Return True to indicate work was successful
+    context.send_successful(context.work_id)
+    return True  # Return True to indicate work was successful
 
 
 def main():
-    tool_id = get_tool_id()
-    tool_worker = ToolWorker(tool_id)
+    simulate_work(work_id="12345")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 import os
 from time import sleep
-from ..generated import api_access as apx
+from ..api import g_api as apx
 from ..log_config import get_logger
 
 
@@ -72,7 +72,7 @@ class ToolBase:
     def ready_for_work(self):
         interval = interval_gen()
         while True:
-            outcome: apx.Outcome = apx.mark_tool_as_ready_for_work(self.tool_id)
+            outcome: apx.Outcome = apx.tool_update_ready(self.tool_id)
             self.logger.info(outcome)
             if outcome.success:
                 return
@@ -85,9 +85,7 @@ class ToolBase:
     def get_work(self):
         interval = interval_gen()
         while True:
-            work: apx.WorkInfo = apx.get_work_assigned_to_the_specified_tool(
-                self.tool_id
-            )
+            work: apx.WorkInfo = apx.tool_details_work_assignment(self.tool_id)
             if not work.work_id:
                 wait = next(interval)
                 self.logger.info(f"Waiting {wait} seconds to check for assigned work")
@@ -98,26 +96,33 @@ class ToolBase:
 
     def send_report(self, work_id: str, status: str, details: dict):
         report_create_rep = apx.ReportCreate(status=status, details=details)
-        apx.add_a_report_to_a_work_item(work_id, report_create_rep)
+        apx.report_create(work_id, report_create_rep)
         self.logger.info(f"Report sent for {work_id} with status {status}")
 
-    def send_successful(self, work_id: str, details: dict):
-        report_create_rep = apx.add_a_report_to_a_work_item(
-            status="success", details=details
-        )
-        apx.mark_work_as_completed_and_successful(work_id, report_create_rep)
+    def send_successful(self, work_id: str):
+        apx.work_update_successful(work_id)
         self.logger.info(f"Successful completion sent for work item {work_id}")
 
-    def send_failed(self, work_id: str, details: dict):
-        report_create_rep = apx.ReportCreate(status="failed", details=details)
-        apx.mark_work_as_completed_and_failed(work_id, report_create_rep)
+    def send_failed(self, work_id: str):
+        apx.work_update_failed(work_id)
         self.logger.info(f"Failed completion sent for work item {work_id}")
 
 
-def get_tool_id() -> str:
+def get_tool_id_from_env() -> str:
     tool_id = os.environ.get("TOOL_ID")
     if not tool_id:
         print("TOOL_ID environment variable not set.")
         exit(1)
     logger.info(f"Starting tool with id {tool_id}")
     return tool_id
+
+
+def run_as_tool(func):
+    """Decorator to run a function as a tool."""
+
+    def wrapper(*args, **kwargs):
+        if not kwargs.get("tool_id"):
+            kwargs["tool_id"] = get_tool_id_from_env()
+        ToolBase(kwargs["tool_id"]).run(func)
+
+    return wrapper

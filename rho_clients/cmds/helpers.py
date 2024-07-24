@@ -56,7 +56,12 @@ def make_tool_create_list(num_tools: int = 5) -> List[apx.ToolCreate]:
 def make_report_create_list(num_reports: int = 5) -> List[apx.ReportCreate]:
     result = []
     for _ in range(num_reports):
-        report_details = sim.populate(cam.report_details_template)
+        report_details = make_report_details()
         report_create = apx.ReportCreate(status=sim.state(), details=report_details)
         result.append(report_create)
     return result
+
+
+def make_report_details() -> dict:
+    report_details = sim.populate(cam.report_details_template)
+    return report_details
