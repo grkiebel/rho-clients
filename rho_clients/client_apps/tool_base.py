@@ -94,10 +94,11 @@ class ToolBase:
                 self.work_context.set(work)
                 return
 
-    def send_report(self, work_id: str, status: str, details: dict):
-        report_create_rep = apx.ReportCreate(status=status, details=details)
-        apx.report_create(work_id, report_create_rep)
-        self.logger.info(f"Report sent for {work_id} with status {status}")
+    def send_report(self, work_id: str, report_create: apx.ReportCreate):
+        apx.report_create(work_id, report_create)
+        self.logger.info(
+            f"Report sent for {work_id} with status {report_create.status}"
+        )
 
     def send_successful(self, work_id: str):
         apx.work_update_successful(work_id)
@@ -118,7 +119,9 @@ def get_tool_id_from_env() -> str:
 
 
 def run_as_tool(func):
-    """Decorator to run a function as a tool."""
+    """Decorator to run a function as a tool.
+    Creates an instance of ToolBase and passes it a reference to the function.
+    """
 
     def wrapper(*args, **kwargs):
         if not kwargs.get("tool_id"):

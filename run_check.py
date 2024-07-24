@@ -30,7 +30,7 @@ def assign_work() -> None:
     pairs = find_assignments(cam.AppMatchChecker())
     for tool_id, task_id in pairs:
         work_create_rep = apx.WorkCreate(tool_id=tool_id, task_id=task_id)
-        outcome = apx.create_work(work_create_rep)
+        outcome = apx.work_create(work_create_rep)
         print(outcome.message)
 
 
@@ -41,7 +41,7 @@ def run_assigner():
 
 
 def run_tool_in_thread(tool_id) -> Thread:
-    thread = Thread(target=tap.run)
+    thread = Thread(target=tap.simulate_work, kwargs={"tool_id": tool_id})
     thread.start()
     return thread
 

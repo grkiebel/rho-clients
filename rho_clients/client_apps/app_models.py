@@ -44,7 +44,7 @@ class AppMatchChecker(MatchCheckerBase):
             lambda needs, skills: needs[PRIORITY] >= skills[MAX_PRIORITY],
             lambda needs, skills: needs[PROCESSOR] in ["", skills[PROCESSOR]],
         ]
-        self.task_sort_key = lambda task_needs: task_needs[PRIORITY]
+        self.task_sort_key = lambda task: task.task_needs[PRIORITY]
         self.is_match = lambda task_needs, tool_skills: all(
-            func(task_needs.task_needs, tool_skills) for func in self.comparators
+            func(task_needs, tool_skills) for func in self.comparators
         )
