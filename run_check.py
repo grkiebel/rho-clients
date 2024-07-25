@@ -58,7 +58,7 @@ def run_archive_monitor():
         ids = [str(archive.work_id) for archive in archived_work]
         recent = ids[-3:]
         print(f"Archived work: Num: {len(ids)} ,{', '.join(recent)}")
-        # TODO: print archived work item and delete it
+        # TODO: print archived work iteam and delete it
         sleep(10)
 
 
