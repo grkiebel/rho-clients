@@ -17,7 +17,7 @@ class MatchCheckerBase:
 
 def find_assignments(match_checker: MatchCheckerBase) -> List[Tuple[str, str]]:
     pairs: List[(str, str)] = []
-    sort_key = match_checker.task_sort_key
+    task_sort_key = match_checker.task_sort_key
     is_match = match_checker.is_match
 
     tools: List[apx.BasicTool] = apx.tool_list_available()
@@ -26,8 +26,9 @@ def find_assignments(match_checker: MatchCheckerBase) -> List[Tuple[str, str]]:
         logger.info("No work candidates availble")
         return []
 
-    if sort_key:
-        tasks.sort(key=sort_key)
+    if task_sort_key:
+        tasks.sort(key=task_sort_key)
+    # TODO: sort tools
 
     used_tools: Set[apx.BasicTool] = set()
     used_tasks: Set[apx.BasicTask] = set()
