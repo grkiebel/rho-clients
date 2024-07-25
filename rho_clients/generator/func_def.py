@@ -1,5 +1,5 @@
 from typing import List
-from .schema import type_map
+from .model_def import type_map
 
 
 class Parameter:
