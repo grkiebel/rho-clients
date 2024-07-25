@@ -6,7 +6,6 @@ from rho_clients.api import g_api as apx
 from rho_clients.client_apps import app_models as cam
 from rho_clients.client_apps.assigner_app import find_assignments
 from rho_clients.client_apps import tool_app as tap
-from rho_clients.cmds import sim
 from rho_clients.cmds import helpers as hp
 
 
@@ -71,26 +70,40 @@ def run_archive_monitor_in_thread():
 class SimRun:
 
     def __init__(self, num_tools: int = 5, num_tasks: int = 10):
-        self.tool_creates: List[apx.ToolCreate] = hp.make_tool_create_list(num_tools)
-        self.task_creates: List[apx.TaskCreate] = hp.make_task_create_list(num_tasks)
+        self.num_tools = num_tools
+        self.num_tasks = num_tasks
+        self.tool_creates: List[apx.ToolCreate] = []
+        self.task_creates: List[apx.TaskCreate] = []
 
         self.threads: List[Thread] = []
 
     def run(self):
         clear_db()
 
-        for tool_create in self.tool_creates:
+        for _ in range(self.num_tools):
+            tool_create = hp.make_tool_create()
+            self.tool_creates.append(tool_create)
             apx.tool_create(tool_create)
+            print(f"Tool created: {tool_create.tool_id}")
+            hp.random_delay()
 
-        for task_create in self.task_creates:
+        for _ in range(self.num_tasks):
+            task_create = hp.make_task_create()
+            self.task_creates.append(task_create)
             apx.task_create(task_create)
-
-        thread = run_assigner_in_thread()
-        self.threads.append(thread)
+            print(f"Task created: {task_create.task_id}")
+            hp.random_delay()
 
         for tool_create in self.tool_creates:
             thread = run_tool_in_thread(tool_create.tool_id)
+            print(f"Tool running: {tool_create.tool_id}")
             self.threads.append(thread)
+
+        hp.random_delay()
+
+        thread = run_assigner_in_thread()
+        print("Assigner running")
+        self.threads.append(thread)
 
         thread = run_archive_monitor_in_thread()
         self.threads.append(thread)

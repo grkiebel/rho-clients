@@ -6,7 +6,7 @@ from typer import Context, Typer, Argument
 from rich import print
 from ..api import g_api as apx
 from ..cmds.helpers import display_result
-from ..cmds import sim
+from ..cmds import helpers as hp
 
 # ------------------------------------------------------------
 
@@ -15,7 +15,7 @@ intro = "\n Work: Type help to see commands.\nType 'exit' to return to main menu
 
 def make_typer_shell(
     app: Typer,
-    prompt: str = "🔳: ",
+    prompt: str = "▶︎: ",
     intro: str = "\nType help to see commands.\n",
     default: Optional[Callable] = None,
 ) -> None:

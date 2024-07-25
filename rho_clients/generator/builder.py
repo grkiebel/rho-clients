@@ -151,7 +151,7 @@ cmd_create_func_template = f'''
 @<PATH_ROOT>_app.command()
 def <CMD_FUNC_NAME>(<CMD_DEF_ARGS>):
     """ <SUMMARY> """
-    creation_models = sim.make_<ACCESS_FUNC_NAME>_list(num)
+    creation_models = hp.make_<ACCESS_FUNC_NAME>_list(num)
     for req in creation_models:
         result = apx.<ACCESS_FUNC_NAME>(<ACCESS_FUNC_CALLING_ARGS>)
         display_result(result, "<DISPLAY_LABEL>")
