@@ -2,20 +2,6 @@ import json
 import requests
 
 
-# type_mapping = {
-#     "string": "str",
-#     "integer": "int",
-#     "boolean": "bool",
-#     "object": "Dict",
-#     "array": "List",
-#     "null": "None",
-# }
-
-
-# def type_map(type: str) -> str:
-#     return type_mapping.get(type, type)
-
-
 class ApiSchema:
     def __init__(self, source: str):
         self.schema = self.obtain_schema(source)
