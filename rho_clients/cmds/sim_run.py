@@ -1,15 +1,13 @@
+import argparse
 from time import sleep
 from typing import List
 from threading import Thread
-from rho_clients.log_config import get_logger
-from rho_clients.api import g_api as apx
-from rho_clients.client_apps import app_models as cam
-from rho_clients.client_apps.assigner_app import find_assignments
-from rho_clients.client_apps import tool_app as tap
-from rho_clients.cmds import helpers as hp
-
-
-apx.initialize("http://localhost:8080", get_logger("API-Access"))
+from ..log_config import get_logger
+from ..api import g_api as apx
+from ..client_apps import app_models as cam
+from ..client_apps.assigner_app import find_assignments
+from ..client_apps import tool_app as tap
+from ..cmds import helpers as hp
 
 
 def clear_db():
@@ -69,7 +67,7 @@ def run_archive_monitor_in_thread():
 
 class SimRun:
 
-    def __init__(self, num_tools: int = 5, num_tasks: int = 10):
+    def __init__(self, num_tools: int = 10, num_tasks: int = 20):
         self.num_tools = num_tools
         self.num_tasks = num_tasks
         self.tool_creates: List[apx.ToolCreate] = []
@@ -109,11 +107,31 @@ class SimRun:
         self.threads.append(thread)
 
 
-if __name__ == "__main__":
+def main():
+    args = get_args()
+    apx.initialize(args.rho_service_url, get_logger("API-Access"))
+    SimRun(num_tasks=args.num_tasks, num_tools=args.num_tools).run()
 
-    status = apx.general_status()
-    print(status)
 
-    SimRun(num_tasks=20, num_tools=10).run()
-
-    print("done")
+def get_args():
+    parser = argparse.ArgumentParser(description="API Generator")
+    parser.add_argument(
+        "-url",
+        "--rho_service_url",
+        help="URL to the rho-service",
+        default="http://localhost:8080",
+    )
+    parser.add_argument(
+        "-tls",
+        "--num_tools",
+        help="Number of tools to create",
+        default=10,
+    )
+    parser.add_argument(
+        "-tks",
+        "--num_tasks",
+        help="Number of tasks to create",
+        default=20,
+    )
+    args = parser.parse_args()
+    return args
