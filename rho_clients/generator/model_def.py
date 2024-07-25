@@ -7,6 +7,7 @@ type_mapping = {
     "object": "Dict",
     "array": "List",
     "null": "None",
+    "date-time": "datetime",
 }
 
 
@@ -37,8 +38,9 @@ class ModelDef:
                 type = type_map(property["type"])
                 field.types.append(type)
             elif "anyOf" in property:
-                types = [type_map(p["type"]) for p in property["anyOf"]]
-                field.types.extend(types)
+                for p in property.get("anyOf", []):
+                    type = type_map(p.get("format", p.get("type", "unknown")))
+                    field.types.append(type)
             else:
                 field.types.append("unknown")
             self.fields.append(field)
