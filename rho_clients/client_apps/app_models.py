@@ -1,5 +1,6 @@
-from .assigner_app import MatchCheckerBase
+from typing import List, Tuple
 from ..cmds import sim as sim
+from ..api import g_api as apx
 
 
 """ 
@@ -35,26 +36,19 @@ report_details_template = {
 }
 
 
-class AppMatchChecker(MatchCheckerBase):
-    """Check if a tool can service a task- modify as needed"""
+def sort_candidates(
+    tools: List[apx.BasicTool], tasks: List[apx.BasicTask]
+) -> Tuple[List, List]:
+    tools.sort(key=lambda tool: tool.ready_since)
+    tasks.sort(key=lambda task: (task.task_needs[PRIORITY], task.created_at))
+    return tools, tasks
 
-    def __init__(self):
-        super().__init__()
 
-        # sort tasks by priority and how old they are
-        self.task_sort_key = lambda task: (task.task_needs[PRIORITY], task.created_at)
-
-        # sort tools by rhow long they have been ready
-        self.tool_sort_key = lambda tool: tool.ready_since
-
-        # define the criteria for a match
-        self.comparators = [
-            lambda needs, skills: needs[TASK_TYPE] == skills[TASK_TYPE],
-            lambda needs, skills: needs[PRIORITY] >= skills[MAX_PRIORITY],
-            lambda needs, skills: needs[PROCESSOR] in ["", skills[PROCESSOR]],
-        ]
-
-        # check if all criteria are met for given task and tool
-        self.is_match = lambda task_needs, tool_skills: all(
-            func(task_needs, tool_skills) for func in self.comparators
-        )
+def is_match(task: apx.BasicTask, tool: apx.BasicTool) -> bool:
+    needs = task.task_needs
+    skills = tool.tool_skills
+    hits: List[bool] = []
+    hits.append(needs[TASK_TYPE] == skills[TASK_TYPE])
+    hits.append(needs[PRIORITY] >= skills[MAX_PRIORITY])
+    hits.append(needs[PROCESSOR] in ["", skills[PROCESSOR]])
+    return all(hits)

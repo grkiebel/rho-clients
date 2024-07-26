@@ -52,7 +52,7 @@ def make_report_create_list(num_reports: int = 5) -> List[apx.ReportCreate]:
 
 
 def make_work_create_list(num_work_items: int = 1) -> List[apx.WorkCreate]:
-    pairs = find_assignments(cam.AppMatchChecker())
+    pairs = find_assignments(sorter=cam.sort_candidates, matcher=cam.is_match)
     pairs = pairs[:num_work_items]
     result = []
     for tool_id, task_id in pairs:
