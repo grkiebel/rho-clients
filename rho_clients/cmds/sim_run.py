@@ -4,30 +4,17 @@ from typing import List
 from threading import Thread
 from ..log_config import get_logger
 from ..api import g_api as apx
-from ..client_apps import app_models as cam
-from ..client_apps.assigner_app import find_assignments
 from ..client_apps import tool_app as tap
 from ..cmds import helpers as hp
 
 
-def clear_db():
-    outcome = apx.tool_clear()
-    print(outcome)
-    outcome = apx.task_clear()
-    print(outcome)
-    outcome = apx.report_clear()
-    print(outcome)
-    outcome = apx.work_clear()
-    print(outcome)
-    outcome = apx.archive_clear()
-    print(outcome)
+rnd_int = hp.random_int_generator(0, 3)
 
 
 def assign_work() -> None:
-    pairs = find_assignments(cam.AppMatchChecker())
-    for tool_id, task_id in pairs:
-        work_create_rep = apx.WorkCreate(tool_id=tool_id, task_id=task_id)
-        outcome = apx.work_create(work_create_rep)
+    work_create_list = hp.make_work_create_list(num_work_items=50)
+    for work_create in work_create_list:
+        outcome = apx.work_create(work_create)
         print(outcome.message)
 
 
@@ -76,28 +63,28 @@ class SimRun:
         self.threads: List[Thread] = []
 
     def run(self):
-        clear_db()
+        hp.clear_db()
 
         for _ in range(self.num_tools):
             tool_create = hp.make_tool_create()
             self.tool_creates.append(tool_create)
             apx.tool_create(tool_create)
             print(f"Tool created: {tool_create.tool_id}")
-            hp.random_delay()
+            sleep(next(rnd_int))
 
         for _ in range(self.num_tasks):
             task_create = hp.make_task_create()
             self.task_creates.append(task_create)
             apx.task_create(task_create)
             print(f"Task created: {task_create.task_id}")
-            hp.random_delay()
+            sleep(next(rnd_int))
 
         for tool_create in self.tool_creates:
             thread = run_tool_in_thread(tool_create.tool_id)
             print(f"Tool running: {tool_create.tool_id}")
             self.threads.append(thread)
 
-        hp.random_delay()
+        sleep(5)
 
         thread = run_assigner_in_thread()
         print("Assigner running")
