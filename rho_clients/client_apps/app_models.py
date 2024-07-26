@@ -36,15 +36,15 @@ report_details_template = {
 }
 
 
-def sort_candidates(
-    tools: List[apx.BasicTool], tasks: List[apx.BasicTask]
-) -> Tuple[List, List]:
+def sorter(tools: List[apx.BasicTool], tasks: List[apx.BasicTask]) -> Tuple[List, List]:
+    """sort the tools and tasks"""
     tools.sort(key=lambda tool: tool.ready_since)
     tasks.sort(key=lambda task: (task.task_needs[PRIORITY], task.created_at))
     return tools, tasks
 
 
-def is_match(task: apx.BasicTask, tool: apx.BasicTool) -> bool:
+def matcher(task: apx.BasicTask, tool: apx.BasicTool) -> bool:
+    """determine if a task and tool are a match"""
     needs = task.task_needs
     skills = tool.tool_skills
     hits: List[bool] = []

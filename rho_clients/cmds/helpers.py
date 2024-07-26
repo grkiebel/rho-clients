@@ -2,8 +2,7 @@ import random
 from typing import List
 from ..api import g_api as apx
 from . import sim
-from ..client_apps import app_models as cam
-from ..client_apps.assigner_app import find_assignments
+from ..client_apps import app_models as cam, assigner_app as asn
 import os
 
 
@@ -52,7 +51,7 @@ def make_report_create_list(num_reports: int = 5) -> List[apx.ReportCreate]:
 
 
 def make_work_create_list(num_work_items: int = 1) -> List[apx.WorkCreate]:
-    pairs = find_assignments(sorter=cam.sort_candidates, matcher=cam.is_match)
+    pairs = asn.find_assignments(sorter=cam.sorter, matcher=cam.matcher)
     pairs = pairs[:num_work_items]
     result = []
     for tool_id, task_id in pairs:
