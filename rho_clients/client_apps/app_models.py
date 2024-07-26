@@ -39,12 +39,14 @@ class AppMatchChecker(MatchCheckerBase):
     def __init__(self):
         super().__init__()
 
+        self.task_sort_key = lambda task: task.task_needs[PRIORITY]
+        self.tool_sort_key = lambda tool: tool.ready_since
+
         self.comparators = [
             lambda needs, skills: needs[TASK_TYPE] == skills[TASK_TYPE],
             lambda needs, skills: needs[PRIORITY] >= skills[MAX_PRIORITY],
             lambda needs, skills: needs[PROCESSOR] in ["", skills[PROCESSOR]],
         ]
-        self.task_sort_key = lambda task: task.task_needs[PRIORITY]
         self.is_match = lambda task_needs, tool_skills: all(
             func(task_needs, tool_skills) for func in self.comparators
         )
