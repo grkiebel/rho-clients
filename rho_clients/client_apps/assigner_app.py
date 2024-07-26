@@ -12,11 +12,12 @@ class MatchCheckerBase:
 
     def __init__(self):
         self.task_sort_key = None  # default: no task sorting
+        self.tool_sort_key = None  # default: no tool sorting
         self.is_match = lambda task_needs, tool_skills: True  # default: always match
 
 
 def find_assignments(match_checker: MatchCheckerBase) -> List[Tuple[str, str]]:
-    pairs: List[(str, str)] = []
+    pairs: List[(str, str)] = []  # List of matched pairs as (tool_id, task_id) tuples
     task_sort_key = match_checker.task_sort_key
     tool_sort_key = match_checker.tool_sort_key
     is_match = match_checker.is_match
