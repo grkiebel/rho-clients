@@ -1,4 +1,8 @@
 from typer import Typer
+import argparse
+from ..api import g_api as apx
+from . import cmd_shell as cs
+from ..log_config import get_logger
 from .g_cmds import (
     tool_app,
     task_app,
@@ -30,8 +34,24 @@ app.add_typer(general_app, name="general", help="General commands")
 #     print("-foobar")
 
 
-def main():
+def main(service_url: str = None):
+    if not service_url:
+        service_url = get_args()
+    apx.initialize(service_url, get_logger("API-Access"))
     app()
+
+
+def get_args():
+    parser = argparse.ArgumentParser(description="API Generator")
+    parser.add_argument(
+        "-url",
+        "--rho_service_url",
+        help="URL to the rho-service",
+        default="http://localhost:8080",
+    )
+
+    args = parser.parse_args()
+    return args.rho_service_url
 
 
 if __name__ == "__main__":

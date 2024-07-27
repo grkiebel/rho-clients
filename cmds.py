@@ -1,4 +1,4 @@
-from rho_clients.cmds import main as cs
+from rho_clients.cmds import cmd_shell as cs
 
 
 if __name__ == "__main__":
