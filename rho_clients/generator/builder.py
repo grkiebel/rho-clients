@@ -1,6 +1,3 @@
-from ast import arg
-import cmd
-from os import path
 from typing import List
 from .model_def import ModelDef, ModelField
 from .definitions import FuncDef
