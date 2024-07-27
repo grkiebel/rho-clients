@@ -1,6 +1,7 @@
 from typing import List, Tuple
 from ..cmds import sim as sim
 from ..api import g_api as apx
+from ..client_apps import assigner_app as asn
 
 
 """ 
@@ -36,6 +37,7 @@ report_details_template = {
 }
 
 
+@asn.assignment_sorter("primary")
 def sorter(tools: List[apx.BasicTool], tasks: List[apx.BasicTask]) -> Tuple[List, List]:
     """sort the tools and tasks"""
     tools.sort(key=lambda tool: tool.ready_since)
@@ -43,6 +45,7 @@ def sorter(tools: List[apx.BasicTool], tasks: List[apx.BasicTask]) -> Tuple[List
     return tools, tasks
 
 
+@asn.assignment_matcher("primary")
 def matcher(task: apx.BasicTask, tool: apx.BasicTool) -> bool:
     """determine if a task and tool are a match"""
     needs = task.task_needs
