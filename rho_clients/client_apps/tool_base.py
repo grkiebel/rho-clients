@@ -3,11 +3,14 @@ from time import sleep
 from ..api import g_api as apx
 from ..log_config import get_logger
 
+""" This module provides common functionality used tools. """
 
 logger = get_logger("Tool")
 
 
 def interval_gen(base: int = 15, max: int = 300, step: int = 20):
+    """Generator that yields an interval of time to wait between checks.
+    The interval starts at the base value and increases by the step value"""
     current_value = base
     while True:
         yield current_value
@@ -16,6 +19,7 @@ def interval_gen(base: int = 15, max: int = 300, step: int = 20):
 
 
 class WorkContext:
+    """Provides data and functions for the tool to perform its assigned work."""
 
     def __init__(self, tool_base: object):
         self.work_id: int = None
@@ -54,12 +58,16 @@ class WorkContext:
                 setattr(self, c, getattr(obj, c))
 
 
-class ToolBase:
+class ToolWrangler:
+    """Manages the interaction between the tool and the rho-service to perform work.
+    The actual work is performed by a function passed to the run method."""
+
     def __init__(self, tool_id: str):
         self.tool_id: str = tool_id
         self.work_context = WorkContext(self)
 
     def run(self, do_work: callable):
+        """Run the tool with the provided function to perform the work."""
         self.logger = get_logger(self.tool_id)
         self.logger.info(f"Starting tool with id {self.tool_id}")
         while True:
@@ -70,6 +78,7 @@ class ToolBase:
                 break
 
     def ready_for_work(self):
+        """Designate the tool as ready to receive work."""
         interval = interval_gen()
         while True:
             outcome: apx.Outcome = apx.tool_update_ready(self.tool_id)
@@ -83,6 +92,7 @@ class ToolBase:
             sleep(wait)
 
     def get_work(self):
+        """Get the work assignment for the tool."""
         interval = interval_gen()
         while True:
             work: apx.WorkInfo = apx.tool_details_work_assignment(self.tool_id)
@@ -95,21 +105,25 @@ class ToolBase:
                 return
 
     def send_report(self, work_id: str, report_create: apx.ReportCreate):
+        """Send a report for the current work item."""
         apx.report_create(work_id, report_create)
         self.logger.info(
             f"Report sent for {work_id} with status {report_create.status}"
         )
 
     def send_successful(self, work_id: str):
+        """Send a successful completion for the current work item."""
         apx.work_update_successful(work_id)
         self.logger.info(f"Successful completion sent for work item {work_id}")
 
     def send_failed(self, work_id: str):
+        """Send a failed completion for the current work item."""
         apx.work_update_failed(work_id)
         self.logger.info(f"Failed completion sent for work item {work_id}")
 
 
 def get_tool_id_from_env() -> str:
+    """Get the tool id from the environment."""
     tool_id = os.environ.get("TOOL_ID")
     if not tool_id:
         print("TOOL_ID environment variable not set.")
@@ -119,13 +133,13 @@ def get_tool_id_from_env() -> str:
 
 
 def run_as_tool(func):
-    """Decorator to run a function as a tool.
+    """Decorator to designate that the decorated function should be run as a tool.
     Creates an instance of ToolBase and passes it a reference to the function.
     """
 
     def wrapper(*args, **kwargs):
         if not kwargs.get("tool_id"):
             kwargs["tool_id"] = get_tool_id_from_env()
-        ToolBase(kwargs["tool_id"]).run(func)
+        ToolWrangler(kwargs["tool_id"]).run(func)
 
     return wrapper

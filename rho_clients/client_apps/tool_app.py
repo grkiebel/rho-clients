@@ -2,8 +2,10 @@ import random
 from time import sleep
 from typing import List
 from .tool_base import WorkContext, run_as_tool
-from ..cmds import helpers as hp
+from ..cmds import cmd_helpers as hp
 from ..api import g_api as apx
+
+""" This code simulates a tool that performs work and sends reports and a completion. """
 
 
 @run_as_tool

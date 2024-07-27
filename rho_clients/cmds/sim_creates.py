@@ -3,6 +3,8 @@ from .sim_words import sentence, state
 from ..api import g_api as apx
 from ..client_apps import app_models as cam
 
+""" Generate simulated data for testing and command shell commands """
+
 
 def make_tool_create():
     tool_skills = populate(cam.tool_skills_template, tool_skills_sim_fields)

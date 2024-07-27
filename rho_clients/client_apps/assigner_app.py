@@ -2,6 +2,9 @@ from typing import List, Set, Tuple
 from ..api import g_api as apx
 from ..log_config import get_logger
 
+""" This module provides a set of tool/tasks assignments based 
+on the registered sorters and matchers. """
+
 logger = get_logger("Assigner")
 
 assignment_matchers = {"null": lambda tools, tasks: (tools, tasks)}

@@ -1,6 +1,8 @@
 import random
 import os
 
+""" This module generates random sentences and states """
+
 random.seed(os.getpid())
 
 

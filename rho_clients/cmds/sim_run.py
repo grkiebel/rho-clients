@@ -5,8 +5,10 @@ from threading import Thread
 from ..log_config import get_logger
 from ..api import g_api as apx
 from ..client_apps import tool_app as tap
-from ..cmds import helpers as hp
+from . import cmd_helpers as hp
 
+""" This module runs a full scale simulated operation 
+of the various rho-service clients. """
 
 rnd_int = hp.random_int_generator(0, 3)
 
@@ -53,6 +55,7 @@ def run_archive_monitor_in_thread():
 
 
 class SimRun:
+    """This class runs a full scale simulated operation"""
 
     def __init__(self, num_tools: int = 10, num_tasks: int = 20):
         self.num_tools = num_tools

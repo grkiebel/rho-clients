@@ -9,7 +9,8 @@ from .g_cmds import (
     make_typer_shell,
 )
 
-# import assignments
+""" This module provides a command shell that can be used 
+to accesses the endpoints of the rho-service. """
 
 app: Typer = Typer()
 make_typer_shell(app)
