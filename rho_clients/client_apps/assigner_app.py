@@ -4,8 +4,8 @@ from ..log_config import get_logger
 
 logger = get_logger("Assigner")
 
-assignment_matchers = {"default": lambda tools, tasks: (tools, tasks)}
-assignment_sorters = {"default": lambda task, tool: True}
+assignment_matchers = {"null": lambda tools, tasks: (tools, tasks)}
+assignment_sorters = {"null": lambda task, tool: True}
 
 
 def assignment_sorter(key: str):
@@ -28,14 +28,15 @@ def assignment_matcher(key: str):
     return decorator
 
 
-def find_assignments(key: str = "default") -> List[Tuple[str, str]]:
-    sorter = assignment_sorters.get(key)
-    matcher = assignment_matchers.get(key)
+def find_assignments(s_key: str = "null", m_key: str = "null") -> List[Tuple[str, str]]:
+    """Find assignments using the sorter and matcher registered under the given key"""
+    sorter = assignment_sorters.get(s_key)
+    matcher = assignment_matchers.get(m_key)
     if not sorter or not matcher:
-        logger.error(f"Sorter and/or matcher not found for key: {key}")
+        logger.error(f"Sorter and/or matcher not found for keys: {s_key}, {m_key}")
         return []
 
-    logger.info(f"Using key '{key}' for sorter and matcher")
+    logger.info(f"Using sorter key '{s_key}' and matcher key '{m_key}'")
 
     tools, tasks = sorter(apx.tool_list_available(), apx.task_list_available())
     if not tools or not tasks:

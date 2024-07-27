@@ -51,7 +51,7 @@ def make_report_create_list(num_reports: int = 5) -> List[apx.ReportCreate]:
 
 
 def make_work_create_list(num_work_items: int = 1) -> List[apx.WorkCreate]:
-    pairs = asn.find_assignments(key="primary")
+    pairs = asn.find_assignments(s_key="primary", m_key="primary")
     pairs = pairs[:num_work_items]
     result = []
     for tool_id, task_id in pairs:

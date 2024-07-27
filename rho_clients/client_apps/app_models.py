@@ -37,6 +37,7 @@ report_details_template = {
 }
 
 
+# register this function with the assigner as a sorter under the key "primary"
 @asn.assignment_sorter("primary")
 def sorter(tools: List[apx.BasicTool], tasks: List[apx.BasicTask]) -> Tuple[List, List]:
     """sort the tools and tasks"""
@@ -45,6 +46,7 @@ def sorter(tools: List[apx.BasicTool], tasks: List[apx.BasicTask]) -> Tuple[List
     return tools, tasks
 
 
+# register this function with the assigner as a matcher under the key "primary"
 @asn.assignment_matcher("primary")
 def matcher(task: apx.BasicTask, tool: apx.BasicTool) -> bool:
     """determine if a task and tool are a match"""
