@@ -29,7 +29,7 @@ def assignment_matcher(key: str):
 
 
 def find_assignments(s_key: str = "null", m_key: str = "null") -> List[Tuple[str, str]]:
-    """Find assignments using the sorter and matcher registered under the given key"""
+    """Find assignments using the sorter and matcher registered under the given keys"""
     sorter = assignment_sorters.get(s_key)
     matcher = assignment_matchers.get(m_key)
     if not sorter or not matcher:
