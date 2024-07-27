@@ -1,6 +1,5 @@
 from enum import Enum
 from typing import List, Tuple
-from ..cmds import sim_fields as sim_fields
 from ..api import g_api as apx
 from ..client_apps import assigner_app as asn
 
