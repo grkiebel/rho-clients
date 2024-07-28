@@ -3,8 +3,12 @@ from time import sleep
 from typing import List
 from ..api import g_api as apx
 from ..cmds import cmd_helpers as hp
+from ..log_config import get_logger
+
 
 rnd_int = hp.random_int_generator(0, 3)
+
+logger = get_logger("TaskMgr")
 
 
 class TaskMgr:
@@ -23,7 +27,7 @@ class TaskMgr:
             task_create = hp.make_task_create()
             self.task_creates.append(task_create)
             apx.task_create(task_create)
-            print(f"Task created: {task_create.task_id}")
+            logger.info(f"Task created: {task_create.task_id}")
             sleep(next(rnd_int))
 
 

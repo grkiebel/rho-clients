@@ -4,8 +4,11 @@ from typing import List
 from ..api import g_api as apx
 from ..client_apps import tool_app as tap
 from ..cmds import cmd_helpers as hp
+from ..log_config import get_logger
 
 rnd_int = hp.random_int_generator(0, 3)
+
+logger = get_logger("ToolMgr")
 
 
 class ToolMgr:
@@ -31,7 +34,7 @@ class ToolMgr:
         tool_create = hp.make_tool_create()
         self.tool_creates.append(tool_create)
         apx.tool_create(tool_create)
-        print(f"Tool created: {tool_create.tool_id}")
+        logger.info(f"Tool created: {tool_create.tool_id}")
         return tool_create
 
     def run_tool_in_thread(self, tool_id) -> Thread:

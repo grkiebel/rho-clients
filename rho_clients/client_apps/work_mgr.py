@@ -2,6 +2,9 @@ from threading import Thread
 from time import sleep
 from typing import List
 from ..api import g_api as apx
+from ..log_config import get_logger
+
+logger = get_logger("WorkMgr")
 
 
 class WorkMgr:
@@ -19,5 +22,5 @@ class WorkMgr:
             archived_work = apx.archive_list()
             ids = [str(archive.work_id) for archive in archived_work]
             recent = ids[-3:]
-            print(f"Archived work: Num: {len(ids)} ,{', '.join(recent)}")
+            logger.info(f"Archived work: Num: {len(ids)} ,{', '.join(recent)}")
             # TODO: print archived work iteam and delete it
