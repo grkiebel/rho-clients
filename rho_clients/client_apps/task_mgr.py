@@ -10,6 +10,10 @@ rnd_int = hp.random_int_generator(0, 3)
 
 logger = get_logger("TaskMgr")
 
+""" This module simulates the creation of tasks.  
+In a real-world scenario, would likely originate from an external system.
+"""
+
 
 class TaskMgr:
     """This class creates new tasks up to given number"""

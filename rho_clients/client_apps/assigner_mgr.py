@@ -8,7 +8,10 @@ logger = get_logger("AssignerMgr")
 
 
 class AssignerMgr:
-    """This class runs an assigner in a separate thread"""
+    """This class runs an assigner in a separate thread.
+    In this case, the assigner is implemented by the exaple assigner.
+    In a real-world scenario, the assigner could be implemented by an external system.
+    """
 
     def run(self, interval: int = 8):
         self.interval = interval

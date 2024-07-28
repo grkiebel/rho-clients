@@ -6,6 +6,10 @@ from ..log_config import get_logger
 
 logger = get_logger("WorkMgr")
 
+""" This module monitors archived work items. 
+In a real-world scenario, this would be a implemented by an external system. 
+"""
+
 
 class WorkMgr:
     def __init__(self, interval: int = 8) -> None:

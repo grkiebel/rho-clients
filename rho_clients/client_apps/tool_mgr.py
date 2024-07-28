@@ -10,6 +10,11 @@ rnd_int = hp.random_int_generator(0, 3)
 
 logger = get_logger("ToolMgr")
 
+""" This module simulates the creation and use of tools. 
+In a real-world scenario, tools would be managed some sort of 
+system dashboard or admin interface. 
+"""
+
 
 class ToolMgr:
     """This class runs a given number of tools in separate threads"""
