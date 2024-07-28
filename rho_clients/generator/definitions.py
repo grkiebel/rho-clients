@@ -5,6 +5,9 @@ from .model_def import ModelDef
 
 
 class Definitions:
+    """This class extracts information from the schema
+    into definition objects that builders can use to generate code."""
+
     def __init__(self, schema: ApiSchema):
 
         self.model_defs: List[ModelDef] = []

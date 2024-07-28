@@ -2,45 +2,18 @@ from typing import List
 from .model_def import ModelDef, ModelField
 from .definitions import FuncDef
 
-
-# --------------------------------------
-class ModelBuilder:
-    indent = "    "
-
-    def __init__(self, model_def: ModelDef):
-        self.model_name: str = model_def.model_name
-        self.fields: List[ModelField] = model_def.fields
-
-    def code(self):
-        code_block = f"class {self.model_name}(BaseModel):\n"
-        for field in self.fields:
-            field_code = f"{self.indent}{str(field)}\n"
-            code_block += field_code
-        return code_block
-
-
-class ArgsBuilder:
-    def __init__(self, base_args: List[dict], request_model: str, func_type: str):
-        self.api_def_args: List[str] = [f"{p[0]}: {p[1]}" for p in base_args]
-        self.api_call_args: List[str] = [p[0] for p in base_args]
-
-        if request_model:
-            self.api_def_args.append(f"req: {request_model}")
-            self.api_call_args.append("req")
-
-        id_args = [a for a in self.api_call_args if a.endswith("_id")]
-
-        self.cmd_def_args = [f"{a}: IdArg" for a in id_args]
-        if func_type == "create":
-            self.cmd_def_args.append("num: NumOption")
+""" This module contains classes necessary to generate code
+from the information in the FuncDef and ModelDef objects
+that have been ."""
 
 
 class FuncBuilderBase:
-    """Creates information needed to generate code for a function"""
+    """Creates information needed to generate code for a function
+    from the information in the FuncDef object.  Actual code generation
+    is implemented by subclasses of this class."""
 
     def __init__(self, func_def: FuncDef):
         self.func_def: FuncDef = func_def
-
         self.summary: str = func_def.summary
         self.http_method: str = func_def.method
         self.path: str = func_def.path
@@ -89,8 +62,6 @@ class FuncBuilderBase:
         args_builder = ArgsBuilder(self.base_args, self.request_model, self.func_type)
         self.api_def_args = ", ".join(args_builder.api_def_args)
         self.api_call_args = ", ".join(args_builder.api_call_args)
-        # self.ops_func_def_args = ", ".join(args_builder.ops_def_args)
-        # self.ops_func_call_args = ", ".join(args_builder.ops_call_args)
         self.cmd_args = ", ".join(args_builder.cmd_def_args)
 
         self.template_tag_values = {
@@ -110,65 +81,16 @@ class FuncBuilderBase:
             "<DISPLAY_LABEL>": self.label,
         }
 
-    def dump(self):
-        print(f"/n------------------")
-        for k, v in self.template_tag_values.items():
-            print(f"{k} -> {v}")
-
-    def _get_code_from_template(self, template: str):
+    def _get_code_from_template(self, template: str) -> str:
         code = template
         for placeholder, value in self.template_tag_values.items():
             code = code.replace(placeholder, value)
         return code
 
-
-# --------------------------------------
-
-api_template = f"""
-# <SUMMARY>
-@handle_exceptions
-def <ACCESS_FUNC_NAME>(<ACCESS_FUNC_DEF_ARGS>) -> <ACCESS_FUNC_RETURN_TYPE>:
-    url = base_url + f'<PATH>'
-    response = requests.<HTTP_METHOD>(url<ACCESS_REQUEST_MODEL>)
-    response.raise_for_status()
-    data = response.json()
-    return <ACCESS_FUNC_OUTPUT_CONVERSION>
-"""
-
-
-cmd_basic_func_template = f'''
-@<PATH_ROOT>_app.command()
-def <CMD_FUNC_NAME>(<CMD_DEF_ARGS>):
-    """ <SUMMARY> """
-    result = apx.<ACCESS_FUNC_NAME>(<ACCESS_FUNC_CALLING_ARGS>)
-    display_result(result, "<DISPLAY_LABEL>")
-'''
-
-cmd_create_func_template = f'''
-@<PATH_ROOT>_app.command()
-def <CMD_FUNC_NAME>(<CMD_DEF_ARGS>):
-    """ <SUMMARY> """
-    creation_models = hp.make_<ACCESS_FUNC_NAME>_list(num)
-    for req in creation_models:
-        result = apx.<ACCESS_FUNC_NAME>(<ACCESS_FUNC_CALLING_ARGS>)
-        display_result(result, "<DISPLAY_LABEL>")
-'''
-
-# --------------------------------------
-
-
-class FuncBuilder(FuncBuilderBase):
-    """Generates code for function group from information defined in super class"""
-
-    def __init__(self, func_def: FuncDef):
-        super().__init__(func_def)
-
-    def api_func_code(self):
-        return self._get_code_from_template(api_template)
-
-    def cmd_func_code(self) -> str:
-        template = self._get_cmd_code_template()
-        return self._get_code_from_template(template)
+    def dump(self):
+        print(f"/n------------------")
+        for k, v in self.template_tag_values.items():
+            print(f"{k} -> {v}")
 
     def __str__(self):
         items = [
@@ -182,23 +104,114 @@ class FuncBuilder(FuncBuilderBase):
         ]
         return "\n".join(items)
 
-    def _get_cmd_code_template(self):
-        if self.func_type == "create":
-            return cmd_create_func_template
-        return cmd_basic_func_template
+
+# --------------------------------------
+
+
+class ApiFuncBuilder(FuncBuilderBase):
+    """Generates code for for an API function from information defined in super class"""
+
+    def __init__(self, func_def: FuncDef):
+        super().__init__(func_def)
+
+    def code(self):
+        return self._get_code_from_template(self.api_template)
+
+    api_template = f"""
+# <SUMMARY>
+@handle_exceptions
+def <ACCESS_FUNC_NAME>(<ACCESS_FUNC_DEF_ARGS>) -> <ACCESS_FUNC_RETURN_TYPE>:
+    url = base_url + f'<PATH>'
+    response = requests.<HTTP_METHOD>(url<ACCESS_REQUEST_MODEL>)
+    response.raise_for_status()
+    data = response.json()
+    return <ACCESS_FUNC_OUTPUT_CONVERSION>
+"""
 
 
 # --------------------------------------
 
 
-def get_cmd_shell_definition_code(builders: List[FuncBuilder]) -> str:
-    """Returns the code that creates a Typer shell for each path root"""
-    root_path_set = set([bldr.path_root for bldr in builders])
-    root_path_list = sorted(list(root_path_set), reverse=True)
-    lines = []
-    for root in root_path_list:
-        lines.append(f"{root}_app = Typer()")
-        lines.append(
-            f'make_typer_shell({root}_app, prompt="{root.capitalize()}: ", intro=intro)'
-        )
-    return "\n".join(lines)
+class CmdFuncBuilder(FuncBuilderBase):
+    """Generates code for a command function from information defined in super class"""
+
+    def __init__(self, func_def: FuncDef):
+        super().__init__(func_def)
+
+    def code(self) -> str:
+        template = self._get_cmd_code_template()
+        return self._get_code_from_template(template)
+
+    def _get_cmd_code_template(self):
+        if self.func_type == "create":
+            return self.cmd_create_func_template
+        return self.cmd_basic_func_template
+
+    @staticmethod
+    def shell_definition_code(builders: List[FuncBuilderBase]) -> List[str]:
+        """Returns the code that creates a Typer shell for each path root"""
+        root_path_set = set([bldr.path_root for bldr in builders])
+        root_path_list = sorted(list(root_path_set), reverse=True)
+        lines = []
+        for root in root_path_list:
+            lines.append(f"{root}_app = Typer()")
+            lines.append(
+                f'make_typer_shell({root}_app, prompt="{root.capitalize()}: ", intro=intro)'
+            )
+        return lines
+
+    cmd_basic_func_template = f'''
+@<PATH_ROOT>_app.command()
+def <CMD_FUNC_NAME>(<CMD_DEF_ARGS>):
+    """ <SUMMARY> """
+    result = apx.<ACCESS_FUNC_NAME>(<ACCESS_FUNC_CALLING_ARGS>)
+    display_result(result, "<DISPLAY_LABEL>")
+'''
+
+    cmd_create_func_template = f'''
+@<PATH_ROOT>_app.command()
+def <CMD_FUNC_NAME>(<CMD_DEF_ARGS>):
+    """ <SUMMARY> """
+    creation_models = hp.make_<ACCESS_FUNC_NAME>_list(num)
+    for req in creation_models:
+        result = apx.<ACCESS_FUNC_NAME>(<ACCESS_FUNC_CALLING_ARGS>)
+        display_result(result, "<DISPLAY_LABEL>")
+'''
+
+
+# --------------------------------------
+class ModelBuilder:
+    """Creates the code for a Pydantic model
+    from the information in the given ModelDef object"""
+
+    indent = "    "
+
+    def __init__(self, model_def: ModelDef):
+        self.model_name: str = model_def.model_name
+        self.fields: List[ModelField] = model_def.fields
+
+    def code(self):
+        code_block = f"class {self.model_name}(BaseModel):\n"
+        for field in self.fields:
+            field_code = f"{self.indent}{str(field)}\n"
+            code_block += field_code
+        return code_block
+
+
+class ArgsBuilder:
+    """Creates (from the given parameters) argument lists
+    that are appropriate for both function definition and function invocation"""
+
+    def __init__(self, base_args: List[dict], request_model: str, func_type: str):
+        self.api_def_args: List[str] = [f"{p[0]}: {p[1]}" for p in base_args]
+        self.api_call_args: List[str] = [p[0] for p in base_args]
+
+        if request_model:
+            self.api_def_args.append(f"req: {request_model}")
+            self.api_call_args.append("req")
+
+        id_args = [a for a in self.api_call_args if a.endswith("_id")]
+
+        self.cmd_def_args = [f"{a}: IdArg" for a in id_args]
+        if func_type == "create":
+            self.cmd_def_args.append("num: NumOption")
