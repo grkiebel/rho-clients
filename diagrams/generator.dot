@@ -1,0 +1,110 @@
+digraph example {
+    rankdir=LR; // Set the rankdir attribute to LR
+    compound=true;
+
+    label = "Generator Structure";
+    fontname="Arial";
+    edge [
+        color="blue", 
+        style="ortho", 
+        fontsize=10,
+        fontname="Arial";
+    ];
+    splines=ortho
+    // concentrate=true
+
+    node [
+        shape=box, 
+        fillcolor="white", 
+        color="black", 
+        fontname="Arial", 
+        fontsize=10
+    ];
+
+    // Increase the spacing between subgraphs
+    ranksep=1.5
+    ; // Adjust the value as needed
+    
+
+    subgraph cluster_generator {
+        style="rounded,filled";        
+        label="Generator";
+        fillcolor="lightgrey";
+
+        color="red"
+        fontsize=11
+		node [style=filled,color=green, fillcolor=lightgreen];
+
+        Generator;
+        ApiGenerator;
+        CmdGenerator;
+        FileOutput;
+
+        Generator -> ApiGenerator;
+        Generator -> CmdGenerator;
+        CmdGenerator -> FileOutput;
+        ApiGenerator -> FileOutput;
+    }
+
+    subgraph cluster_definitions {
+        style="rounded,filled";        
+        label="Definitions";
+        fillcolor="white";
+        color="black";
+        fontsize=11
+        fillcolor="lightgrey";
+
+
+        Definitions;
+    }
+
+    subgraph cluster_schema {
+        style="rounded,filled";        
+        label="Schema";
+        fillcolor="white";
+        color="black";
+        fontsize=11
+        fillcolor="lightgrey";
+
+        Schema;
+    }
+
+    subgraph cluster_builders {
+        style="rounded,filled";        
+        label="Code\nBuilders";
+        fillcolor="white";
+        color="black";
+        fontsize=11
+        fillcolor="lightgrey";
+
+        ApiBuilder;
+        CmdBuilder;
+    }
+
+    subgraph cluster_source {
+        style="rounded,filled,dotted"; // Add dotted outline        
+        label="Source";
+        // labelloc=b;
+        fillcolor="white";
+        color="black";
+        fontsize=11
+        node [shape=ellipse];
+        // margin="15, 5";
+
+        File;
+        Service;
+    }
+
+
+    Service -> Schema;
+    File -> Schema;
+    Generator -> Schema;
+    Generator -> Definitions;
+    ApiGenerator -> ApiBuilder;
+    CmdGenerator -> CmdBuilder;
+    // Schema -> Service; [lhead=cluster_source, xlabel="⇧(json)"]
+    // Schema -> File;
+
+
+    
+}
