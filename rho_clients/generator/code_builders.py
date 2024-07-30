@@ -2,9 +2,9 @@ from typing import List
 from .model_def import ModelDef, ModelField
 from .definitions import FuncDef
 
-""" This module contains classes necessary to generate code
+""" This module contains builder classes that generate code
 from the information in the FuncDef and ModelDef objects
-that have been ."""
+that contain information that was extracted from the schema."""
 
 
 class FuncBuilderBase:

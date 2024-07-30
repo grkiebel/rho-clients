@@ -27,6 +27,9 @@ class ModelField:
 
 
 class ModelDef:
+    """This class extracts and stores information from the schema
+    that is used by a code builder to create code for a model class."""
+
     def __init__(self, model_name: str, schema: dict):
         self.model_name = model_name
         self.fields: List[ModelField] = []

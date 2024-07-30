@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from typing import List
-from .builder import (
+from .code_builders import (
     ApiFuncBuilder,
     CmdFuncBuilder,
     FuncBuilderBase,
@@ -9,6 +9,9 @@ from .builder import (
 )
 from .definitions import Definitions
 from .schema import ApiSchema
+
+""" This module contains the Generator classes that generates the API, 
+command, and diagnostic files"""
 
 root_dir = "rho_clients"
 tmplt_dir = os.path.join(root_dir, "generator")
@@ -24,7 +27,6 @@ class Generator:
     def run(self, diagnostic: bool = False):
         ApiFileGenerator(self.definitions).run()
         CmdFileGenerator(self.definitions).run()
-
         if diagnostic:
             DiagnosticFileGenerator(self.definitions).run()
 
