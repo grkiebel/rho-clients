@@ -1,14 +1,8 @@
 import os
 from datetime import datetime
 from typing import List
-from .code_builders import (
-    ApiFuncBuilder,
-    CmdFuncBuilder,
-    FuncBuilderBase,
-    ModelBuilder,
-)
-from .definitions import Definitions
-from .schema import ApiSchema
+from .code_builders import ApiFuncBuilder, CmdFuncBuilder, ModelBuilder
+from .definitions import Definitions, ApiSchema, get_definitions
 
 """ This module contains the Generator classes that generates the API, 
 command, and diagnostic files"""
@@ -20,13 +14,11 @@ tmplt_dir = os.path.join(root_dir, "generator")
 class Generator:
     """Main class to generate the API, command, and diagnostic files"""
 
-    def __init__(self, source: str = "schema.json"):
-        self.schema = ApiSchema(source)
-        self.definitions = Definitions(self.schema)
+    def run(self, source: str = "schema.json", diagnostic: bool = False):
+        definitions = get_definitions(source)
 
-    def run(self, diagnostic: bool = False):
-        ApiFileGenerator(self.definitions).run()
-        CmdFileGenerator(self.definitions).run()
+        ApiFileGenerator(definitions).run()
+        CmdFileGenerator(definitions).run()
         if diagnostic:
             DiagnosticFileGenerator(self.definitions).run()
 
