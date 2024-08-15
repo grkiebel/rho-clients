@@ -1,5 +1,5 @@
 digraph example {
-    rankdir=LR; // Set the rankdir attribute to LR
+    rankdir=TB; // Set the rankdir attribute to LR
     compound=true;
 
     label = "Generator Structure";
@@ -9,12 +9,14 @@ digraph example {
         style="ortho", 
         fontsize=10,
         fontname="Arial";
+        // arrowhead="vee";
+        arrowsize=0.6;
     ];
     splines=ortho
-    // concentrate=true
+    concentrate=true
 
     node [
-        shape=box, 
+        shape="box", 
         fillcolor="white", 
         color="black", 
         fontname="Arial", 
@@ -28,10 +30,10 @@ digraph example {
 
     subgraph cluster_generator {
         style="rounded,filled";        
-        label="Generator";
+        label="generator";
         fillcolor="lightgrey";
 
-        color="red"
+        // color="red"
         fontsize=11
 		node [style=filled,color=green, fillcolor=lightgreen];
 
@@ -48,34 +50,38 @@ digraph example {
 
     subgraph cluster_definitions {
         style="rounded,filled";        
-        label="Definitions";
+        label="definitions";
         fillcolor="white";
         color="black";
         fontsize=11
         fillcolor="lightgrey";
+		node [style=filled,color=green,fillcolor=lightgreen];
 
-
-        Definitions;
+        DefMain [shape=oval, label="Main"];
+        Definitions
+        Schema;    
     }
 
-    subgraph cluster_schema {
-        style="rounded,filled";        
-        label="Schema";
-        fillcolor="white";
-        color="black";
-        fontsize=11
-        fillcolor="lightgrey";
+    // subgraph cluster_schema {
+    //     style="rounded,filled";        
+    //     label="Schema";
+    //     fillcolor="white";
+    //     color="black";
+    //     fontsize=11
+    //     fillcolor="lightgrey";
+	// 	node [style=filled,color=green, fillcolor=lightgreen];
 
-        Schema;
-    }
+
+    // }
 
     subgraph cluster_builders {
         style="rounded,filled";        
-        label="Code\nBuilders";
+        label="code_builders";
         fillcolor="white";
         color="black";
         fontsize=11
         fillcolor="lightgrey";
+		node [style=filled,color=green, fillcolor=lightgreen];
 
         ApiBuilder;
         CmdBuilder;
@@ -83,11 +89,12 @@ digraph example {
 
     subgraph cluster_source {
         style="rounded,filled,dotted"; // Add dotted outline        
-        label="Source";
-        // labelloc=b;
+        fontsize=9
+        label="Source\n(OpenApi 3.10.1)";
+        labelloc=b;
         fillcolor="white";
         color="black";
-        fontsize=11
+
         node [shape=ellipse];
         // margin="15, 5";
 
@@ -95,16 +102,34 @@ digraph example {
         Service;
     }
 
+    subgraph cluster_output {
+        node [shape=ellipse];
+        style="rounded,filled,dotted"; // Add dotted outline        
+        fontsize=9
+        label="Output Files";
+        labelloc=b;
+        fillcolor="white";
+        color="black";
 
-    Service -> Schema;
-    File -> Schema;
-    Generator -> Schema;
-    Generator -> Definitions;
+        api_file [label="g_api.py"];
+        cmd_file [label="g_cmd.py"];
+        // g_api.py;
+        // g_cmd.py;
+        // g_diagnostic.py;
+    }
+
+
+    // Service -> Schema;
+    // File -> Schema;
+    Generator -> DefMain;
+    DefMain -> Definitions;
+    DefMain -> Schema;
     ApiGenerator -> ApiBuilder;
     CmdGenerator -> CmdBuilder;
-    // Schema -> Service; [lhead=cluster_source, xlabel="⇧(json)"]
-    // Schema -> File;
+    Schema -> Service[style="dotted", label="⇧schema\n(json)"];
+    Schema -> File[style="dotted", xlabel="⇧schema\n(json)"];
 
+    FileOutput -> api_file;
+    FileOutput -> cmd_file;
 
-    
 }
