@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import List, Tuple
-from ..api import g_api as apx
+from ..generated import g_api as apx
 from ..client_apps import assigner_app as asn
 
 

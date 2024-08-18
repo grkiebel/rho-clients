@@ -1,6 +1,6 @@
 import random
 from .sim_words import sentence, state
-from ..api import g_api as apx
+from ..generated import g_api as apx
 from ..client_apps import app_models as cam
 
 """ Generate simulated data for testing and command shell commands """

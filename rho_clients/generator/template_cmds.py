@@ -4,9 +4,10 @@ from typing import Optional, Callable
 from click_shell import make_click_shell
 from typer import Context, Typer, Argument
 from rich import print
-from ..api import g_api as apx
+from ..generated import g_api as apx
 from ..cmds.cmd_helpers import display_result
 from ..cmds import cmd_helpers as hp
+
 
 # ------------------------------------------------------------
 

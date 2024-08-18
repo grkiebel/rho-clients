@@ -1,7 +1,7 @@
 from threading import Thread
 from time import sleep
 from typing import List
-from ..api import g_api as apx
+from ..generated import g_api as apx
 from ..log_config import get_logger
 
 logger = get_logger("WorkMgr")

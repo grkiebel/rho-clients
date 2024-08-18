@@ -1,6 +1,6 @@
 import os
 from time import sleep
-from ..api import g_api as apx
+from ..generated import g_api as apx
 from ..log_config import get_logger
 
 """ This module provides common functionality used tools. """

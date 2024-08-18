@@ -1,9 +1,8 @@
 from typer import Typer
 import argparse
-from ..api import g_api as apx
-from . import cmd_shell as cs
+from ..generated import g_api as apx
 from ..log_config import get_logger
-from .g_cmds import (
+from ..generated.g_cmds import (
     tool_app,
     task_app,
     work_app,

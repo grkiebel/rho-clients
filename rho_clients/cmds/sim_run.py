@@ -1,7 +1,7 @@
 import argparse
 from . import cmd_helpers as hp
 from ..log_config import get_logger
-from ..api import g_api as apx
+from ..generated import g_api as apx
 from ..client_apps.tool_mgr import ToolMgr
 from ..client_apps.task_mgr import TaskMgr
 from ..client_apps.assigner_mgr import AssignerMgr
