@@ -1,0 +1,7 @@
+click
+click-shell
+pydantic
+requests
+rich
+shellingham
+typer
