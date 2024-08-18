@@ -4,23 +4,22 @@ from typing import List
 
 
 class GeneratedFileWriter:
-    """Class to write generated code list to a file"""
+    """Class to write generated code list to a file together with a common header and specific code template"""
 
     def __init__(self, file_tag: str, code_list: List[str]):
         self.file_tag = file_tag
         self.code_list = code_list
 
-        self.root_dir = "rho_clients"  # TODO: get cwd from os
-        self.template_dir = os.path.join(self.root_dir, "generator")
-        self.output_dir = os.path.join(self.root_dir, "generated")
+        root_dir = "rho_clients"  # TODO: get cwd from os
+        output_dir = os.path.join(root_dir, "generated")
+        self.template_dir = os.path.join(root_dir, "generator")
         self.template_path = os.path.join(self.template_dir, f"template_{file_tag}.py")
-        self.output_file_path = os.path.join(self.output_dir, f"g_{file_tag}.py")
-        self.output_file_header = self.get_file_header()
-        self.output_file_template_code = self.get_template_code()
+        self.output_file_path = os.path.join(output_dir, f"g_{file_tag}.py")
 
         self.assure_folders_exist(self.output_file_path)
 
     def get_template_code(self) -> str:
+        """Get the template code for the file"""
         with open(self.template_path, "r") as template:
             return template.read()
 
@@ -35,6 +34,7 @@ class GeneratedFileWriter:
             )
 
     def assure_folders_exist(self, file_path: str):
+        """Ensure the all the parent folders for the given file path exist"""
         folder_path = os.path.dirname(file_path)
         os.makedirs(folder_path, exist_ok=True)
 
@@ -42,8 +42,11 @@ class GeneratedFileWriter:
         print(f"Writing {self.file_tag} to {self.output_file_path}")
 
         with open(self.output_file_path, "w") as file:
-            file.write(self.output_file_header)
-            file.write(self.output_file_template_code)
+            output_file_header = self.get_file_header()
+            output_file_template_code = self.get_template_code()
+
+            file.write(output_file_header)
+            file.write(output_file_template_code)
             for code in self.code_list:
                 file.write(code)
                 file.write("\n")
