@@ -7,6 +7,7 @@ venv
 *.egg-info/
 
 note*.txt
+junk*
 x_*
 g_*
 y_*
