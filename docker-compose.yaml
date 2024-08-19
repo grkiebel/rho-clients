@@ -1,0 +1,11 @@
+services:
+  clients:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rho_clients
+    volumes:
+      - .:/app:rw
+    network_mode: host
+
+    command: tail -f /dev/null
