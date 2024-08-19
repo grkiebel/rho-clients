@@ -1,10 +1,6 @@
-from threading import Thread
-from time import sleep
-from typing import List
-from ..generated import g_api as apx
-from ..client_apps import tool_app as tap
 from ..cmds import cmd_helpers as hp
 from ..log_config import get_logger
+import subprocess
 
 rnd_int = hp.random_int_generator(0, 3)
 
@@ -21,4 +17,31 @@ tool_pids = {}
 # if tool is already managed and running, do nothing
 # if tool is already managed and not running, start it
 # if tool is not managed, launch it (subprocess or thread)
-# if tool is managed, but not in rho-service, stop it and unmanage it
+# if tool is managed, but not in rho-service, kill it and unmanage it
+
+# ...
+
+# Create a subprocess
+subprocess_obj = subprocess.Popen(["command", "arg1", "arg2"])
+
+# Store the subprocess PID in the tool_pids dictionary
+tool_pids[subprocess_obj.pid] = subprocess_obj
+
+# ...
+# Check the status of the subprocess
+status = subprocess_obj.poll()
+
+if status is None:
+    print("Subprocess is still running")
+else:
+    print(f"Subprocess has completed with exit status: {status}")
+
+# Terminate a subprocess
+subprocess_obj.terminate()
+del tool_pids[subprocess_obj.pid]
+
+
+# maintain data about tools that are already being managed
+# - sqlite? json? csv? in-memory?
+
+# modify tool_app.py to get its tool_id from the command line (or environment variable? or either?)
