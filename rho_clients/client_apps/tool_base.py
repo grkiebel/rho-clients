@@ -134,7 +134,7 @@ def get_tool_id_from_env() -> str:
 
 def run_as_tool(func):
     """Decorator to designate that the decorated function should be run as a tool.
-    Creates an instance of ToolBase and passes it a reference to the function.
+    Creates an instance of ToolWrangler and passes it a reference to the function.
     """
 
     def wrapper(*args, **kwargs):
