@@ -1,4 +1,4 @@
-from rho_clients.cmds import sim_run
+from rho_clients.cmd_shell import sim_run
 
 
 if __name__ == "__main__":

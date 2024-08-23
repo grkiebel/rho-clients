@@ -2,7 +2,7 @@ from threading import Thread
 from time import sleep
 from typing import List
 from ..generated import g_api as apx
-from ..cmds import cmd_helpers as hp
+from ..cmd_shell import cmd_helpers as hp
 from ..log_config import get_logger
 
 

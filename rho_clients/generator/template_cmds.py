@@ -5,8 +5,8 @@ from click_shell import make_click_shell
 from typer import Context, Typer, Argument
 from rich import print
 from ..generated import g_api as apx
-from ..cmds.cmd_helpers import display_result
-from ..cmds import cmd_helpers as hp
+from ..cmd_shell.cmd_helpers import display_result
+from ..cmd_shell import cmd_helpers as hp
 
 
 # ------------------------------------------------------------
