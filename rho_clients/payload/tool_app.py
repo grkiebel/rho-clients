@@ -1,7 +1,7 @@
 import random
 from time import sleep
 from typing import List
-from .tool_base import WorkContext, run_as_tool
+from ..client_apps.tool_base import WorkContext, run_as_tool
 from ..cmd_shell import cmd_helpers as hp
 from ..generated import g_api as apx
 
