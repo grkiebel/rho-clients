@@ -5,7 +5,7 @@ venv
 
 .vscode/
 *.egg-info/
-
+*.db
 note*.txt
 junk*
 x_*

@@ -1,3 +1,4 @@
+from calendar import c
 from datetime import datetime
 from multiprocessing import process
 from typing import List
@@ -22,15 +23,23 @@ This module simulates the creation and use of tools.
 # ----------------------------------------------------
 
 
-class ManagedToolDb(SQLModel, table=True):
+class ManagedTool(SQLModel, table=True):
     __tablename__ = "managed_tools"
-    id: int = Field(default=None, primary_key=True)
-    tool_id: str = Field(default=None)
+    tool_id: str = Field(primary_key=True)
     enabled: bool = Field(default=None)
     ready_since: datetime | None = Field(default=None)
     orphaned: bool = Field(default=False)
     command: str = Field(default="tool_app.py")
     process_id: str = Field(default=None)
+
+    @classmethod
+    def from_tool(cls, tool: apx.BriefTool) -> "ManagedTool":
+        return cls(
+            tool_id=tool.tool_id,
+            enabled=tool.enabled,
+            ready_since=None,
+            orphaned=False,
+        )
 
 
 class ToolManager:
@@ -38,47 +47,37 @@ class ToolManager:
         self.engine = create_engine("sqlite:///tools.db")
         SQLModel.metadata.create_all(self.engine)
 
-    def find(self, tool_id: str) -> ManagedToolDb:
-        """Find a tool in tools list by its tool_id, return None if not found"""
-        with Session(self.engine) as session:
-            return (
-                session.exec(ManagedToolDb)
-                .where(ManagedToolDb.tool_id == tool_id)
-                .first()
-            )
-
     def update(self, current_tools: List[apx.BriefTool]) -> None:
         self._add_new_tools(current_tools)
         self._delete_old_tools(current_tools)
+
+    def find(self, tool_id: str) -> ManagedTool:
+        """Find a tool in tools list by its tool_id, return None if not found"""
+        with Session(self.engine) as session:
+            return (
+                session.exec(ManagedTool).where(ManagedTool.tool_id == tool_id).first()
+            )
 
     def _add_new_tools(self, current_tools: List[apx.BriefTool]):
         with Session(self.engine) as session:
             for current_tool in current_tools:
                 if not self.find(current_tool.tool_id):
-                    managed_tool = self.ManagedTool(tool=current_tool)
-                    managed_tool.start()
+                    managed_tool = ManagedTool.from_tool(current_tool)
                     session.add(managed_tool)
             session.commit()
 
     def _delete_old_tools(self, current_tools) -> None:
+        current_tools_ids = [t.tool_id for t in current_tools]
         with Session(self.engine) as session:
-            for managed_tool in session.exec(ManagedToolDb).all():
-                if not self._tool_is_managed(managed_tool, current_tools):
-                    managed_tool.stop()
+            managed_tools = session.exec(ManagedTool).all()
+            for managed_tool in managed_tools:
+                if managed_tool.tool_id not in current_tools_ids:
                     session.delete(managed_tool)
             session.commit()
 
-    def _tool_is_managed(
-        self, managed_tool: ManagedToolDb, current_tools: List[apx.BriefTool]
-    ) -> bool:
-        return any(
-            managed_tool.tool_id == current_tool.tool_id
-            for current_tool in current_tools
-        )
-
 
 def manage_tools(interval: int = 5) -> None:
-    managed_tools = ToolManager(ManagedToolDb)
+    managed_tools = ToolManager()
     while True:
         tools: List[apx.BriefTool] = apx.tool_list()
         managed_tools.update(tools)
