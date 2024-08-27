@@ -1,12 +1,7 @@
-from calendar import c
 from datetime import datetime
-from multiprocessing import process
 from typing import List
-import subprocess
 from time import sleep
-from sqlmodel import Field, SQLModel, create_engine, Session
-from threading import Thread
-from ..cmd_shell import cmd_helpers as hp
+from sqlmodel import Field, SQLModel, create_engine, Session, select
 from ..generated import g_api as apx
 from ..log_config import get_logger
 
@@ -30,7 +25,7 @@ class ManagedTool(SQLModel, table=True):
     ready_since: datetime | None = Field(default=None)
     orphaned: bool = Field(default=False)
     command: str = Field(default="tool_app.py")
-    process_id: str = Field(default=None)
+    process_id: str | None = Field(default=None)
 
     @classmethod
     def from_tool(cls, tool: apx.BriefTool) -> "ManagedTool":
@@ -48,32 +43,27 @@ class ToolManager:
         SQLModel.metadata.create_all(self.engine)
 
     def update(self, current_tools: List[apx.BriefTool]) -> None:
-        self._add_new_tools(current_tools)
-        self._delete_old_tools(current_tools)
+        self._synch_managed_tools(current_tools)
 
-    def find(self, tool_id: str) -> ManagedTool:
-        """Find a tool in tools list by its tool_id, return None if not found"""
+    def _synch_managed_tools(self, current_tools: List[apx.BriefTool]) -> None:
         with Session(self.engine) as session:
-            return (
-                session.exec(ManagedTool).where(ManagedTool.tool_id == tool_id).first()
-            )
+            managed_tools = session.exec(select(ManagedTool)).all()
+            managed_tools_ids = [t.tool_id for t in managed_tools]
+            current_tools_ids = [t.tool_id for t in current_tools]
+            self._add_unmanaged_tools(session, current_tools, managed_tools_ids)
+            self.delete_unused_tools(session, managed_tools, current_tools_ids)
 
-    def _add_new_tools(self, current_tools: List[apx.BriefTool]):
-        with Session(self.engine) as session:
-            for current_tool in current_tools:
-                if not self.find(current_tool.tool_id):
-                    managed_tool = ManagedTool.from_tool(current_tool)
-                    session.add(managed_tool)
-            session.commit()
+    def _add_unmanaged_tools(self, session, current_tools, managed_tools_ids):
+        for tool in current_tools:
+            if tool.tool_id not in managed_tools_ids:
+                managed_tool = ManagedTool.from_tool(tool)
+                session.add(managed_tool)
 
-    def _delete_old_tools(self, current_tools) -> None:
-        current_tools_ids = [t.tool_id for t in current_tools]
-        with Session(self.engine) as session:
-            managed_tools = session.exec(ManagedTool).all()
-            for managed_tool in managed_tools:
-                if managed_tool.tool_id not in current_tools_ids:
-                    session.delete(managed_tool)
-            session.commit()
+    def delete_unused_tools(self, session, managed_tools, current_tools_ids):
+        for managed_tool in managed_tools:
+            if managed_tool.tool_id not in current_tools_ids:
+                session.delete(managed_tool)
+        session.commit()
 
 
 def manage_tools(interval: int = 5) -> None:
