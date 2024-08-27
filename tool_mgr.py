@@ -1,4 +1,4 @@
-from rho_clients.client_apps import tool_mgr_d as tool_mgr
+from rho_clients.client_apps import tool_mgr as tool_mgr
 
 
 def main():
