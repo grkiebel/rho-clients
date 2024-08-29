@@ -7,6 +7,8 @@ from ..generated import g_api as apx
 
 """ This code simulates a tool that performs work and sends reports and a completion. """
 
+keep_running = False  # Set to True to keep the tool running
+
 
 @run_as_tool
 def simulate_work(context: WorkContext) -> bool:
@@ -19,7 +21,7 @@ def simulate_work(context: WorkContext) -> bool:
         sleep(random.randint(1, 3))
 
     context.send_successful(context.work_id)
-    return True  # Return True to indicate work was successful
+    return keep_running
 
 
 def main():
