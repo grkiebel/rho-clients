@@ -6,7 +6,7 @@ from ..client_apps import assigner_app as asn
 
 """ 
 This module defines the application-specific data models
-for the payloads managed by the rho-service.  This is an
+for the app_specifics managed by the rho-service.  This is an
 example for a simple tool sills and task needs model.
 Modify or replace as needed for your actual application.
 """

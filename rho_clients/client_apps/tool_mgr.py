@@ -18,7 +18,7 @@ Tool manager can either be the source of tools or demand driven from work
 """
 
 """
-payload.app_tool_config -> maps tool skills to process command
+app_specific.app_tool_config -> maps tool skills to process command
 
 """
 
@@ -34,7 +34,7 @@ As demand driven:
 - tool manager will create/delete/update tool processors 
   according to tool/work status in the service
 
-  
+
 
 """
 

@@ -17,4 +17,4 @@ dependencies = [
 [project.scripts]
 rho-gen = "rho_clients.generator.main:main"
 rho-cmd = "rho_clients.cmds.cmd_shell:main"
-rho-sim = "rho_clients.payload.sim_run:main"
+rho-sim = "rho_clients.app_specific.sim_run:main"
