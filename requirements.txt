@@ -6,3 +6,4 @@ rich
 shellingham
 typer
 sqlmodel
+docker
