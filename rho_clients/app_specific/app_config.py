@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Tuple
 from ..generated import g_api as apx
-from ..client_apps import assigner_app as asn
+from ..client_apps import assigner_app as asn, tool_mgr as tmgr
 
 
 """ 
@@ -47,6 +47,17 @@ report_details_template = {
     RpKeys.STAGE.value: "",
     RpKeys.ACTION.value: "",
 }
+
+
+@tmgr.tool_processor_lookup()
+def get_processor_for_skills(skills: dict) -> str:
+    """return the processor for the given skills"""
+    skills_processor_map = {
+        "Red": "red_processor.py",
+        "Blue": "blue_processor.py",
+        "Green": "green_processor.py",
+    }
+    return skills_processor_map.get(skills[SkKeys.TASK_TYPE.value], None)
 
 
 # register this function with the assigner as a sorter under the key "primary"
