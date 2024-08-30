@@ -1,6 +1,6 @@
 import random
 from ..generated import g_api as apx
-from ..app_specific import app_models as cam
+from . import app_config as cam
 from ..app_specific.sim_words import sentence, state
 
 
